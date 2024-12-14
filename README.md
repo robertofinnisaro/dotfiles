@@ -23,14 +23,14 @@ dotfiles init
 dotfiles config --local status.showUntrackedFiles no
 ```
 
-Since this demo uses GitHub for sharing the repository, set the branch name to `main`:
+Set the branch name to `main`:
 
 ```bash
 dotfiles branch -M main
 ```
 
 ### Adding Configuration Files
-Add any configuration files you want to store in your dotfiles repository. For this demo, we will start with `.bashrc`:
+Add any configuration files you want to store in your dotfiles repository. We will start with `.bashrc`:
 
 ```bash
 dotfiles add ~/.bashrc
