@@ -1,0 +1,16 @@
+/************ FUTURISTIC GRADIENT CASCADE COLORS ************/
+@define-color bg        #0d0f11;
+@define-color fg        #cfd8dc;
+
+/* Cyan Cascade (bright → dark) */
+@define-color colour-1    #00d4d4;
+@define-color colour-2    #00aaaa;
+@define-color colour-3    #008888;
+@define-color colour-4    #006666;
+@define-color colour-5    #004444;
+
+/* Violet Cascade (for contrast if needed) */
+@define-color violet-1  #b388ff;
+@define-color violet-2  #9e75f8;
+@define-color violet-3  #7f5bd9;
+@define-color violet-4  #5a3da9;

@@ -1,0 +1,16 @@
+# Cache / temp
+*.log
+*.cache
+.cache/
+.cache-*
+
+# System junk
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+
+# Wayland runtime stuff
+wayland-*

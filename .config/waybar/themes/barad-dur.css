@@ -1,0 +1,9 @@
+@define-color bg rgba(151, 197, 193, 0.0);   /* background */
+@define-color fg #e8f0e3;   /* foreground text */
+@define-color fg-a #10160f; /* foreground text alt */
+
+@define-color colour-1    #d98c2f;  /* Eye of Sauron */
+@define-color colour-2    #9a6b3f;  /* Ash bronze */
+@define-color colour-3    #5a4632;  /* Burnt iron */
+@define-color colour-4    #2f2620;  /* Volcanic rock */
+@define-color colour-5    #120e0c;  /* Absolute shadow */

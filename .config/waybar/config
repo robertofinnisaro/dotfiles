@@ -1,0 +1,176 @@
+{
+  "fixed-center": true,
+  "layer": "top",
+  "position": "top",
+  "modules-left": [
+    "custom/arrow5", "hyprland/workspaces",
+    "custom/arrow10", "hyprland/window"],
+  "modules-center": [
+    "custom/arrow5", "temperature",
+    "custom/arrow4", "cpu",
+    "custom/arrow3", "memory",
+    "custom/arrow2",
+    "custom/arrow1", "custom/logo",
+    "custom/arrow6",
+    "custom/arrow7", "clock",
+    "custom/arrow8", "custom/date",
+    "custom/arrow9", 
+    "tray", "custom/osk", "custom/arrow10"
+  ],
+  "modules-right": [
+    "custom/arrow5", "pulseaudio",
+    "custom/arrow4", "backlight",
+    "custom/arrow3", "battery",
+    "custom/arrow2",
+    "custom/arrow1", "custom/power",
+    "custom/arrow6",
+    "custom/arrow11"
+  ],
+
+  "hyprland/workspaces": {
+		"disable-scroll-wraparound": true,
+		"smooth-scrolling-threshold": 4,
+		"enable-bar-scroll": true,
+		"format": "{name}"
+	},
+
+	"hyprland/window": {
+		"format": "{}",
+		"max-length": 30,
+		"tooltip": false
+	},
+
+  "custom/logo": {
+    "on-click": "qs -c ipc call TEST_ALIVE || pkill fuzzel || fuzzel",
+    "format": " ᚠᚱᛁᛖᚾᛞ ",
+    "tooltip": "",
+    "fixed-center": true
+  },
+
+  "custom/osk": {
+    "format": "",
+    "tooltip": "Toggle On-Screen Keyboard",
+    "on-click": "ydotool key 125:1 37:1 37:0 125:0"
+  },
+
+  "clock": {
+    "interval": 60,
+    "format": " {:%H:%M}"
+  },
+
+  "custom/date": {
+    "exec": "date +\\ %d-%m",
+    "interval": 60,
+    "tooltip": false
+  },
+
+  "cpu": {
+    "format": " {usage}%",
+    "tooltip": false
+  },
+
+  "memory": {
+    "format": " {percentage}%",
+    "tooltip": false
+  },
+
+  "battery": {
+    "format": "\ud83d\udd0b {capacity}%",
+    "format-charging": "\u26a1 {capacity}%",
+    "tooltip": false
+  },
+
+  "pulseaudio": {
+    "format": "\ud83d\udd0a {volume}%",
+    "format-muted": "\ud83d\udd07 MUTE"
+  },
+
+  "network": {
+    "interface": "wlp2s0",
+    "format": "{ifname}",
+    "format-wifi": "",
+    "format-ethernet": "󰊗",
+    "format-disconnected": ""
+  },
+
+  "bluetooth": 
+  { "format": " {status}",
+    "format-disabled": "", 
+    "on-click": "bluetooth-manager"
+   }, 
+
+  "temperature": {
+    "interval": 10,
+    "format": " {temperatureC}°C"
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{percent}% {icon}",
+    "format-icons": ["", ""]
+  },
+
+  "custom/power": {
+    "format": "⏻",
+    "tooltip": "Power Options",
+    "on-click": "wlogout",
+    "on-click-right": "systemctl reboot",
+    "on-click-middle": "systemctl poweroff",
+    "interval": 3600
+  },
+
+  "custom/arrow1": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow2": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow3": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow4": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow5": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow6": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow7": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow8": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow9": {
+		"format": "",
+		"tooltip": false
+	},
+
+	"custom/arrow10": {
+		"format": "",
+		"tooltip": false
+	},
+
+  "custom/arrow11": {
+		"format": "",
+		"tooltip": false
+	}
+}
