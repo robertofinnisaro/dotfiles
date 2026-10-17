@@ -132,22 +132,22 @@ Scope {
     IpcHandler {
         target: "search"
 
-        function toggle() {
+        function toggle(): void {
             GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
         }
-        function workspacesToggle() {
+        function workspacesToggle(): void {
             GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
         }
-        function close() {
+        function close(): void {
             GlobalStates.overviewOpen = false;
         }
-        function open() {
+        function open(): void {
             GlobalStates.overviewOpen = true;
         }
-        function toggleReleaseInterrupt() {
+        function toggleReleaseInterrupt(): void {
             GlobalStates.superReleaseMightTrigger = false;
         }
-        function clipboardToggle() {
+        function clipboardToggle(): void {
             overviewScope.toggleClipboard();
         }
     }

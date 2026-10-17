@@ -3,28 +3,27 @@
   "layer": "top",
   "position": "top",
   "modules-left": [
-    "custom/arrow5", "hyprland/workspaces",
-    "custom/arrow10", "hyprland/window"],
-  "modules-center": [
-    "custom/arrow5", "temperature",
-    "custom/arrow4", "cpu",
-    "custom/arrow3", "memory",
-    "custom/arrow2",
-    "custom/arrow1", "custom/logo",
-    "custom/arrow6",
-    "custom/arrow7", "clock",
-    "custom/arrow8", "custom/date",
-    "custom/arrow9", 
-    "tray", "custom/osk", "custom/arrow10"
+    "custom/tailscale",
+    "tray",
+    "hyprland/workspaces",
+    "hyprland/window"
   ],
+
+  "modules-center": [
+    "clock",
+    "custom/logo",
+    "custom/date"
+  ],
+
   "modules-right": [
-    "custom/arrow5", "pulseaudio",
-    "custom/arrow4", "backlight",
-    "custom/arrow3", "battery",
-    "custom/arrow2",
-    "custom/arrow1", "custom/power",
-    "custom/arrow6",
-    "custom/arrow11"
+    "temperature",
+    "cpu",
+    "memory",
+    "pulseaudio",
+    "backlight",
+    "custom/battery",
+    "custom/osk",
+    "custom/power"
   ],
 
   "hyprland/workspaces": {
@@ -41,8 +40,9 @@
 	},
 
   "custom/logo": {
-    "on-click": "qs -c ipc call TEST_ALIVE || pkill fuzzel || fuzzel",
-    "format": " ᚠᚱᛁᛖᚾᛞ ",
+    "on-click": "~/.config/quickshell/scripts/deck-toggle.sh",
+    "on-click-right": "~/.config/quickshell/scripts/search-toggle.sh",
+    "format": " ◈ PALANTÍR ",
     "tooltip": "",
     "fixed-center": true
   },
@@ -50,7 +50,15 @@
   "custom/osk": {
     "format": "",
     "tooltip": "Toggle On-Screen Keyboard",
-    "on-click": "ydotool key 125:1 37:1 37:0 125:0"
+    "on-click": "qs ipc call osk toggle"
+  },
+
+  "custom/tailscale": {
+      "exec": "~/.config/waybar/scripts/tailscale-status.sh",
+      "return-type": "json",
+      "interval": 20,
+      "on-click": "~/.config/waybar/scripts/tailscale-toggle.sh",
+      "tooltip": true
   },
 
   "clock": {
@@ -74,9 +82,15 @@
     "tooltip": false
   },
 
-  "battery": {
-    "format": "\ud83d\udd0b {capacity}%",
-    "format-charging": "\u26a1 {capacity}%",
+  "temperature": {
+    "interval": 10,
+    "format": " {temperatureC}°C"
+  },
+
+  "custom/battery": {
+    "exec": "~/.config/waybar/scripts/battery.sh",
+    "interval": 10,
+    "return-type": "json",
     "tooltip": false
   },
 
@@ -99,11 +113,6 @@
     "on-click": "bluetooth-manager"
    }, 
 
-  "temperature": {
-    "interval": 10,
-    "format": " {temperatureC}°C"
-  },
-
   "backlight": {
     "device": "intel_backlight",
     "format": "{percent}% {icon}",
@@ -112,65 +121,8 @@
 
   "custom/power": {
     "format": "⏻",
-    "tooltip": "Power Options",
-    "on-click": "wlogout",
-    "on-click-right": "systemctl reboot",
-    "on-click-middle": "systemctl poweroff",
+    "tooltip": "Power menu (confirmation required)",
+    "on-click": "~/.config/quickshell/scripts/power-menu.sh",
     "interval": 3600
-  },
-
-  "custom/arrow1": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow2": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow3": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow4": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow5": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow6": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow7": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow8": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow9": {
-		"format": "",
-		"tooltip": false
-	},
-
-	"custom/arrow10": {
-		"format": "",
-		"tooltip": false
-	},
-
-  "custom/arrow11": {
-		"format": "",
-		"tooltip": false
-	}
+  }
 }

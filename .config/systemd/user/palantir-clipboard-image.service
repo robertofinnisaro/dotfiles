@@ -1,0 +1,9 @@
+[Unit]
+Description=Palantir clipboard image history watcher
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env wl-paste --type image/png --watch cliphist store
+Restart=on-failure
+RestartSec=5

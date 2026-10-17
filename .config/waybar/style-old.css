@@ -1,0 +1,178 @@
+@import "themes/barad-dur.css";
+
+/************ GENERAL ************/
+* {
+	border: none;
+	border-radius: 0;
+	min-height: 0;
+	margin: 0;
+	padding: 0;
+	box-shadow: none;
+	text-shadow: none;
+	-gtk-icon-shadow: none;
+}
+
+#waybar {
+  background-color: @bg;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 14px;
+  color: @fg; 
+}
+
+#custom-logo,
+#hyprland-workspaces,
+#temperature,
+#cpu,
+#memory,
+#clock,
+#custom-date,
+#tray,
+#battery,
+#pulseaudio,
+#backlight,
+#custom-power {
+	padding-left: 8pt;
+	padding-right: 8pt;
+}
+
+
+/************ MODULES (CENTER CASCADE) ************/
+#custom-logo {
+  background-color: @colour-1;
+  color: @fg-a;
+}
+
+#temperature {
+  background-color: @colour-5;
+  color: @fg;
+}
+
+#cpu {
+  background-color: @colour-4;
+  color: @fg;
+}
+
+#memory {
+  background-color: @colour-3;
+  color: @fg;
+}
+
+#clock {
+  background-color: @colour-3;
+  color: @fg;
+}
+
+#custom-date {
+  background-color: @colour-4;
+  color: @fg;
+}
+
+#tray {
+  background-color: @colour-5;
+  color: @fg;
+  padding-right: 0px;
+  margin-right: 0px;
+}
+
+/************ CENTER ARROWS ************/
+#custom-arrow1 {
+  color: @colour-1;
+  background: @colour-2;
+}
+
+#custom-arrow2 {
+  color: @colour-2;
+  background: @colour-3;
+}
+
+#custom-arrow3 {
+  color: @colour-3;
+  background: @colour-4;
+}
+
+#custom-arrow4 {
+  color: @colour-4;
+  background: @colour-5;
+}
+
+#custom-arrow5 {
+  color: @colour-5;
+  background: @bg;
+}
+
+#custom-arrow6 {
+  color: @colour-1;
+  background: @colour-2;
+}
+
+#custom-arrow7 {
+  color: @colour-2;
+  background: @colour-3;
+}
+
+#custom-arrow8 {
+  color: @colour-3;
+  background: @colour-4;
+}
+
+#custom-arrow9 {
+  color: @colour-4;
+  background: @colour-5;
+}
+
+#custom-arrow10 {
+  color: @colour-5;
+  background: @bg;
+}
+
+#custom-arrow11 {
+  color: @colour-2;
+  background: @bg;
+}
+
+/************ RIGHT MODULES ************/
+#pulseaudio {
+  background-color: @colour-5;
+  color: @fg;
+}
+
+#backlight {
+  background-color: @colour-4;
+  color: @fg;
+}
+
+#battery {
+  background-color: @colour-3;
+  color: @fg;
+}
+
+#custom-power {
+  background-color: @colour-1;
+  color: @fg;
+}
+
+/************ WORKSPACES & LEFT ************/
+#workspaces {
+  background-color: @colour-5;
+  color: @bg;
+}
+
+/* Active (on focused output) */
+#workspaces button.active {
+	color: @fg;
+	background-color: @colour-2;
+  padding-left: 2pt;
+  padding-right: 2pt;
+  border-radius: 15pt;
+}
+
+#window {
+	margin-right: 10pt;
+	margin-left: 10pt;
+}
+
+#custom-osk {
+  background-color: @colour-5;
+  color: @fg;
+  padding: 0 8px
+}

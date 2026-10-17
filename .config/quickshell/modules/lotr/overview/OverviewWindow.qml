@@ -17,29 +17,29 @@ Item { // Window
     property var scale
     property bool restrictToWorkspace: true
     property real widthRatio: {
-        const widgetWidth = widgetMonitor.transform & 1 ? widgetMonitor.height : widgetMonitor.width;
-        const monitorWidth = monitorData.transform & 1 ? monitorData.height : monitorData.width;
-        return (widgetWidth * monitorData.scale) / (monitorWidth * widgetMonitor.scale);
+        const widgetWidth = (widgetMonitor?.transform ?? 0) & 1 ? (widgetMonitor?.height ?? 1) : (widgetMonitor?.width ?? 1);
+        const monitorWidth = (monitorData?.transform ?? 0) & 1 ? (monitorData?.height ?? 1) : (monitorData?.width ?? 1);
+        return (widgetWidth * (monitorData?.scale ?? 1)) / Math.max(1, monitorWidth * (widgetMonitor?.scale ?? 1));
     }
     property real heightRatio: {
-        const widgetHeight = widgetMonitor.transform & 1 ? widgetMonitor.width : widgetMonitor.height;
-        const monitorHeight = monitorData.transform & 1 ? monitorData.width : monitorData.height;
-        return (widgetHeight * monitorData.scale) / (monitorHeight * widgetMonitor.scale);
+        const widgetHeight = (widgetMonitor?.transform ?? 0) & 1 ? (widgetMonitor?.width ?? 1) : (widgetMonitor?.height ?? 1);
+        const monitorHeight = (monitorData?.transform ?? 0) & 1 ? (monitorData?.width ?? 1) : (monitorData?.height ?? 1);
+        return (widgetHeight * (monitorData?.scale ?? 1)) / Math.max(1, monitorHeight * (widgetMonitor?.scale ?? 1));
     }
     property real initX: {
-        return Math.max((windowData?.at[0] - (monitorData?.x ?? 0) - monitorData?.reserved[0]) * widthRatio * root.scale, 0) + xOffset;
+        return Math.max(((windowData?.at ? windowData.at[0] : 0) - (monitorData?.x ?? 0) - (monitorData?.reserved ? monitorData.reserved[0] : 0)) * widthRatio * root.scale, 0) + xOffset;
     }
 
     property real initY: {
-        return Math.max((windowData?.at[1] - (monitorData?.y ?? 0) - monitorData?.reserved[1]) * heightRatio * root.scale, 0) + yOffset;
+        return Math.max(((windowData?.at ? windowData.at[1] : 0) - (monitorData?.y ?? 0) - (monitorData?.reserved ? monitorData.reserved[1] : 0)) * heightRatio * root.scale, 0) + yOffset;
     }
     property real xOffset: 0
     property real yOffset: 0
     property var widgetMonitor
-    property int widgetMonitorId: widgetMonitor.id
+    property int widgetMonitorId: widgetMonitor?.id ?? -1
 
-    property var targetWindowWidth: windowData?.size[0] * scale * widthRatio
-    property var targetWindowHeight: windowData?.size[1] * scale * heightRatio
+    property var targetWindowWidth: (windowData?.size ? windowData.size[0] : 0) * scale * widthRatio
+    property var targetWindowHeight: (windowData?.size ? windowData.size[1] : 0) * scale * heightRatio
     property bool hovered: false
     property bool pressed: false
 
@@ -57,7 +57,7 @@ Item { // Window
     y: initY
     width: targetWindowWidth
     height: targetWindowHeight
-    opacity: windowData.monitor == widgetMonitorId ? 1 : 0.4
+    opacity: windowData?.monitor === widgetMonitorId ? 1 : 0.4
 
     property real topLeftRadius
     property real topRightRadius

@@ -128,6 +128,7 @@ Singleton {
 
     Process {
         id: readProc
+        property bool reportedReadError: false
         property list<string> buffer: []
 
         command: [root.cliphistBinary, "list"]
@@ -141,8 +142,13 @@ Singleton {
         onExited: (exitCode, exitStatus) => {
             if (exitCode === 0) {
                 root.entries = readProc.buffer
+                readProc.reportedReadError = false
             } else {
-                console.error("[Cliphist] Failed to refresh with code", exitCode, "and status", exitStatus)
+                root.entries = []
+                if (!readProc.reportedReadError) {
+                    console.warn("[Cliphist] Could not read history; check clipboard watcher services")
+                    readProc.reportedReadError = true
+                }
             }
         }
     }

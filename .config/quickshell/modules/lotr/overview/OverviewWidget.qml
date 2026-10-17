@@ -17,8 +17,8 @@ Item {
     readonly property HyprlandMonitor monitor: Hyprland.monitorFor(screen)
     readonly property var toplevels: ToplevelManager.toplevels
     readonly property int workspacesShown: Config.options.overview.rows * Config.options.overview.columns
-    readonly property int workspaceGroup: Math.floor((monitor.activeWorkspace?.id - 1) / workspacesShown)
-    property bool monitorIsFocused: (Hyprland.focusedMonitor?.name == monitor.name)
+    readonly property int workspaceGroup: Math.floor(((monitor?.activeWorkspace?.id ?? 1) - 1) / Math.max(1, workspacesShown))
+    property bool monitorIsFocused: (Hyprland.focusedMonitor?.name === monitor?.name)
     property var windows: HyprlandData.windowList
     property var windowByAddress: HyprlandData.windowByAddress
     property var windowAddresses: HyprlandData.addresses
@@ -27,11 +27,11 @@ Item {
     property color activeBorderColor: Appearance.colors.colSecondary
 
     property real workspaceImplicitWidth: (monitorData?.transform % 2 === 1) ? 
-        ((monitor.height - monitorData?.reserved[0] - monitorData?.reserved[2]) * root.scale / monitor.scale) :
-        ((monitor.width - monitorData?.reserved[0] - monitorData?.reserved[2]) * root.scale / monitor.scale)
+        ((monitor.height - (monitorData?.reserved ? monitorData.reserved[0] : 0) - (monitorData?.reserved ? monitorData.reserved[2] : 0)) * root.scale / monitor.scale) :
+        ((monitor.width - (monitorData?.reserved ? monitorData.reserved[0] : 0) - (monitorData?.reserved ? monitorData.reserved[2] : 0)) * root.scale / monitor.scale)
     property real workspaceImplicitHeight: (monitorData?.transform % 2 === 1) ? 
-        ((monitor.width - monitorData?.reserved[1] - monitorData?.reserved[3]) * root.scale / monitor.scale) :
-        ((monitor.height - monitorData?.reserved[1] - monitorData?.reserved[3]) * root.scale / monitor.scale)
+        ((monitor.width - (monitorData?.reserved ? monitorData.reserved[1] : 0) - (monitorData?.reserved ? monitorData.reserved[3] : 0)) * root.scale / monitor.scale) :
+        ((monitor.height - (monitorData?.reserved ? monitorData.reserved[1] : 0) - (monitorData?.reserved ? monitorData.reserved[3] : 0)) * root.scale / monitor.scale)
     property real largeWorkspaceRadius: Appearance.rounding.large
     property real smallWorkspaceRadius: Appearance.rounding.verysmall
 
@@ -177,6 +177,7 @@ Item {
                         return ToplevelManager.toplevels.values.filter((toplevel) => {
                             const address = `0x${toplevel.HyprlandToplevel?.address}`
                             var win = windowByAddress[address]
+                            if (!win || !win.workspace || !root.monitorData) return false;
                             const inWorkspaceGroup = (root.workspaceGroup * root.workspacesShown < win?.workspace?.id && win?.workspace?.id <= (root.workspaceGroup + 1) * root.workspacesShown)
                             return inWorkspaceGroup;
                         })
@@ -191,7 +192,7 @@ Item {
                     toplevel: modelData
                     monitorData: this.monitor
                     scale: root.scale
-                    widgetMonitor: HyprlandData.monitors.find(m => m.id == root.monitor.id)
+                    widgetMonitor: HyprlandData.monitors.find(m => m.id == root.monitor?.id)
                     windowData: windowByAddress[address]
 
                     property bool atInitPosition: (initX == x && initY == y)
@@ -201,8 +202,8 @@ Item {
                     property int workspaceRowIndex: getWsRow(windowData?.workspace.id)
                     xOffset: (root.workspaceImplicitWidth + workspaceSpacing) * workspaceColIndex
                     yOffset: (root.workspaceImplicitHeight + workspaceSpacing) * workspaceRowIndex
-                    property real xWithinWorkspaceWidget: Math.max((windowData?.at[0] - (monitor?.x ?? 0) - monitorData?.reserved[0]) * root.scale, 0)
-                    property real yWithinWorkspaceWidget: Math.max((windowData?.at[1] - (monitor?.y ?? 0) - monitorData?.reserved[1]) * root.scale, 0)
+                    property real xWithinWorkspaceWidget: Math.max((windowData?.at[0] - (monitor?.x ?? 0) - (monitorData?.reserved ? monitorData.reserved[0] : 0)) * root.scale, 0)
+                    property real yWithinWorkspaceWidget: Math.max((windowData?.at[1] - (monitor?.y ?? 0) - (monitorData?.reserved ? monitorData.reserved[1] : 0)) * root.scale, 0)
 
                     // Radius
                     property real minRadius: Appearance.rounding.small

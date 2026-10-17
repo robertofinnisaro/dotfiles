@@ -1,178 +1,90 @@
-@import "themes/barad-dur.css";
+/* Palantír / Eregion command system — graphite, mithril, elven green, antique gold */
+@define-color obsidian rgba(9, 17, 18, 0.91);
+@define-color panel rgba(19, 34, 34, 0.87);
+@define-color border rgba(132, 166, 143, 0.37);
+@define-color gold #d3b57a;
+@define-color mithril #e0e9de;
+@define-color elven #94d6b6;
+@define-color faded #839c97;
 
-/************ GENERAL ************/
-* {
-	border: none;
-	border-radius: 0;
-	min-height: 0;
-	margin: 0;
-	padding: 0;
-	box-shadow: none;
-	text-shadow: none;
-	-gtk-icon-shadow: none;
-}
-
+* { font-family: "Cinzel", "JetBrainsMono Nerd Font", sans-serif; }
 #waybar {
-  background-color: @bg;
-  font-family: "JetBrainsMono Nerd Font", monospace;
-  font-size: 14px;
-  color: @fg; 
+    background-color: @obsidian;
+    color: @mithril;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(197, 156, 90, 0.67);
 }
-
-#custom-logo,
-#hyprland-workspaces,
-#temperature,
-#cpu,
-#memory,
-#clock,
-#custom-date,
-#tray,
-#battery,
-#pulseaudio,
-#backlight,
-#custom-power {
-	padding-left: 8pt;
-	padding-right: 8pt;
+#custom-logo, #clock, #custom-date, #custom-tailscale,
+#temperature, #cpu, #memory, #pulseaudio, #backlight,
+#custom-battery, #custom-power, #tray {
+    color: @mithril;
+    background-color: @panel;
+    border-radius: 7px;
+    border: 1px solid @border;
+    margin: 4px 3px;
+    padding: 3px 10px;
 }
-
-
-/************ MODULES (CENTER CASCADE) ************/
 #custom-logo {
-  background-color: @colour-1;
-  color: @fg-a;
+    font-weight: bold;
+    color: @gold;
+    letter-spacing: 2px;
+    border-color: rgba(211, 181, 122, 0.65);
+    padding-left: 16px;
+    padding-right: 16px;
 }
-
-#temperature {
-  background-color: @colour-5;
-  color: @fg;
+#custom-logo:hover, #custom-power:hover {
+    background-color: rgba(69, 95, 79, 0.63);
+    border-color: @gold;
 }
-
-#cpu {
-  background-color: @colour-4;
-  color: @fg;
-}
-
-#memory {
-  background-color: @colour-3;
-  color: @fg;
-}
-
-#clock {
-  background-color: @colour-3;
-  color: @fg;
-}
-
-#custom-date {
-  background-color: @colour-4;
-  color: @fg;
-}
-
-#tray {
-  background-color: @colour-5;
-  color: @fg;
-  padding-right: 0px;
-  margin-right: 0px;
-}
-
-/************ CENTER ARROWS ************/
-#custom-arrow1 {
-  color: @colour-1;
-  background: @colour-2;
-}
-
-#custom-arrow2 {
-  color: @colour-2;
-  background: @colour-3;
-}
-
-#custom-arrow3 {
-  color: @colour-3;
-  background: @colour-4;
-}
-
-#custom-arrow4 {
-  color: @colour-4;
-  background: @colour-5;
-}
-
-#custom-arrow5 {
-  color: @colour-5;
-  background: @bg;
-}
-
-#custom-arrow6 {
-  color: @colour-1;
-  background: @colour-2;
-}
-
-#custom-arrow7 {
-  color: @colour-2;
-  background: @colour-3;
-}
-
-#custom-arrow8 {
-  color: @colour-3;
-  background: @colour-4;
-}
-
-#custom-arrow9 {
-  color: @colour-4;
-  background: @colour-5;
-}
-
-#custom-arrow10 {
-  color: @colour-5;
-  background: @bg;
-}
-
-#custom-arrow11 {
-  color: @colour-2;
-  background: @bg;
-}
-
-/************ RIGHT MODULES ************/
-#pulseaudio {
-  background-color: @colour-5;
-  color: @fg;
-}
-
-#backlight {
-  background-color: @colour-4;
-  color: @fg;
-}
-
-#battery {
-  background-color: @colour-3;
-  color: @fg;
-}
-
-#custom-power {
-  background-color: @colour-1;
-  color: @fg;
-}
-
-/************ WORKSPACES & LEFT ************/
+#cpu, #memory, #temperature, #backlight, #custom-battery { color: @elven; }
+#pulseaudio { color: @mithril; }
+#custom-date, #clock { color: @gold; }
+#custom-power { color: @gold; }
+#custom-tailscale { color: @elven; }
+#tray { padding: 2px 8px; }
 #workspaces {
-  background-color: @colour-5;
-  color: @bg;
+    margin: 4px 3px;
+    padding: 2px;
+    background-color: @panel;
+    border: 1px solid @border;
+    border-radius: 7px;
 }
-
-/* Active (on focused output) */
+#workspaces button {
+    color: @faded;
+    padding: 2px 8px;
+    margin: 1px 2px;
+    border-radius: 5px;
+    background-color: transparent;
+}
 #workspaces button.active {
-	color: @fg;
-	background-color: @colour-2;
-  padding-left: 2pt;
-  padding-right: 2pt;
-  border-radius: 15pt;
+    color: @gold;
+    background-color: rgba(169, 142, 80, 0.15);
+    border-bottom: 1px solid @gold;
+}
+#workspaces button.urgent {
+    color: #ffc5a8;
+    background-color: rgba(148, 69, 48, 0.23);
+}
+#hyprland-window { color: @faded; margin-left: 6px; }
+tooltip {
+    background-color: #122221;
+    color: @mithril;
+    border: 1px solid @gold;
+    border-radius: 6px;
 }
 
-#window {
-	margin-right: 10pt;
-	margin-left: 10pt;
-}
-
+/* PALANTIR TOUCH BRIDGE v1 */
 #custom-osk {
-  background-color: @colour-5;
-  color: @fg;
-  padding: 0 8px
+    color: @gold;
+    background-color: @panel;
+    border: 1px solid @border;
+    border-radius: 7px;
+    padding: 5px 13px;
+    margin: 4px 3px;
+    min-width: 28px;
+    min-height: 25px;
+}
+#custom-osk:hover {
+    background-color: rgba(69, 95, 79, 0.63);
+    border-color: @gold;
 }
