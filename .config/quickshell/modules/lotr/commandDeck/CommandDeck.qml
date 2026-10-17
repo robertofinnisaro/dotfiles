@@ -538,6 +538,21 @@ Scope {
                     Column {
                         visible: root.activeTab === 3
                         width: parent.width; spacing: 12
+                        // ORTHANC PHASE 4 / Map and contextual stone
+                        Text { text: "ORTHANC  /  LIVE CARTOGRAPHY"; color: "#ddc28e"; font { pixelSize: 12; bold: true } }
+                        Row {
+                            width: parent.width; spacing: 9
+                            DeckTile {
+                                width: (parent.width - 9)/2; height: 88
+                                glyph: "✧"; title: "Middle-earth Map"; detail: "6 realms / live windows"
+                                onActivated: root.openApp(["qs", "ipc", "call", "atlasMap", "open"])
+                            }
+                            DeckTile {
+                                width: (parent.width - 9)/2; height: 88
+                                glyph: "◉"; title: "Seeing Stone"; detail: "Contextual quick actions"
+                                onActivated: root.openApp(["qs", "ipc", "call", "seeingStone", "open"])
+                            }
+                        }
                         Text { text: "01  /  RAPID ORDERS"; color: "#ddc28e"; font { pixelSize: 12; bold: true } }
                         Row {
                             width: parent.width; spacing: 9

@@ -1,0 +1,35 @@
+{
+    "label": "lock",
+    "action": "hyprlock",
+    "text": "Guard the Gate",
+    "keybind": "l"
+}
+
+{
+    "label": "suspend",
+    "action": "loginctl suspend",
+    "text": "Rest in Ithilien",
+    "keybind": "s"
+}
+
+{
+    "label": "logout",
+    "action": "hyprctl dispatch exit",
+    "text": "Leave Orthanc",
+    "keybind": "e"
+}
+
+{
+    "label": "reboot",
+    "action": "systemctl reboot",
+    "text": "Return Anew",
+    "keybind": "r"
+}
+
+{
+    "label": "shutdown",
+    "action": "systemctl poweroff",
+    "text": "Close the Gates",
+    "keybind": "p"
+}
+
