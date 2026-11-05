@@ -17,6 +17,14 @@ fi
 # Clear the other compositor's socket, left behind if the user manager outlived the last session.
 systemctl --user unset-environment HYPRLAND_INSTANCE_SIGNATURE NIRI_SOCKET || true
 systemctl --user import-environment "${session_vars[@]}" || true
+# Portals started by an earlier session keep its environment and its backend, which breaks
+# screen sharing after switching compositor without a reboot.
+if [[ -n "${NIRI_SOCKET:-}" ]]; then
+    systemctl --user stop xdg-desktop-portal-hyprland.service || true
+else
+    systemctl --user stop xdg-desktop-portal-gnome.service || true
+fi
+systemctl --user try-restart xdg-desktop-portal.service || true
 if ! systemctl --user start palantir-quickshell.service; then
     echo 'Unable to start managed Quickshell; falling back to direct launch' >&2
     exec qs -n

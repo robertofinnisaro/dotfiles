@@ -246,7 +246,7 @@ binds {
     Mod+B hotkey-overlay-title="Brave" { spawn "brave"; }
     Mod+Shift+B hotkey-overlay-title="Brave, private window" { spawn "brave" "--incognito"; }
     Mod+L hotkey-overlay-title="Lock the screen" { spawn "hyprlock"; }
-    Mod+Shift+L allow-when-locked=true hotkey-overlay-title="Hibernate" { spawn-sh "systemctl hibernate || loginctl suspend"; }
+    Mod+Shift+L allow-when-locked=true hotkey-overlay-title="Sleep" { spawn-sh "systemctl suspend"; }
     Mod+M hotkey-overlay-title="Log out of niri" { quit; }
 
     // Palantir panels
