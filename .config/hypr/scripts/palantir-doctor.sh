@@ -4,7 +4,10 @@ set -u
 printf 'PALANTIR SYSTEM DIAGNOSTICS (read only)\n'
 printf '\n=== Session ===\n'
 printf 'WAYLAND_DISPLAY: %s\n' "${WAYLAND_DISPLAY:-unset}"
-if command -v hyprctl >/dev/null; then
+if [[ -n "${NIRI_SOCKET:-}" ]]; then
+  niri msg version 2>&1 | head -2
+  printf '\nniri config check:\n'; niri validate 2>&1 | tail -1
+elif command -v hyprctl >/dev/null; then
   hyprctl version 2>&1 | head -8
   printf '\nHyprland config errors:\n'; hyprctl configerrors 2>&1 | head -35
 fi
@@ -18,7 +21,7 @@ if command -v systemctl >/dev/null; then
   done
 fi
 printf '\n=== Dependencies ===\n'
-for program in python3 monitor-sensor libinput cliphist wl-paste wl-copy powerprofilesctl hyprctl grim slurp; do
+for program in python3 monitor-sensor libinput cliphist wl-paste wl-copy powerprofilesctl niri hyprctl grim slurp; do
   printf '%-20s %s\n' "$program" "$(command -v "$program" || printf 'missing')"
 done
 printf '\n=== Framework sensors & switches ===\n'

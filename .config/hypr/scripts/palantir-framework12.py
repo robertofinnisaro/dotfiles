@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Framework 12 posture and orientation controller for Hyprland.
+"""Framework 12 posture and orientation controller for niri and Hyprland.
 
-Auto mode is driven by Hyprland tablet-mode switch bindings, not by requiring
+Auto mode is driven by the compositor's tablet-mode switch bindings, not by requiring
 unprivileged libinput access. libinput remains a best-effort fallback.
 Does not touch keyboard/touchpad enablement, kernel modules, or display wallpaper.
 """
@@ -14,6 +14,7 @@ from pathlib import Path
 import queue
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import threading
@@ -23,6 +24,9 @@ RUNTIME = Path(os.environ.get('XDG_RUNTIME_DIR', f'/run/user/{os.getuid()}'))
 STATE = RUNTIME / 'palantir-framework12.json'
 COMMAND = RUNTIME / 'palantir-framework12-command.json'
 SWITCH = RUNTIME / 'palantir-framework12-switch.json'
+PIDFILE = RUNTIME / 'palantir-framework12.pid'
+NIRI = bool(os.environ.get('NIRI_SOCKET'))
+NIRI_TRANSFORMS = ('normal', '90', '180', '270')
 ORIENTATIONS = {'normal': 0, 'left-up': 1, 'bottom-up': 2, 'right-up': 3}
 SWITCH_PATTERN = re.compile(r'\b(?:tablet-mode|tablet mode)\s+state\s+([01])\b', re.I)
 SENSOR_PATTERN = re.compile(r'orientation(?: changed)?:\s*(normal|left-up|right-up|bottom-up)\b', re.I)
@@ -57,6 +61,8 @@ def run(args: list[str], *, quiet=True) -> bool:
 
 def internal_monitor() -> tuple[str | None, int | None]:
     """Return eDP name and reported transform; never select external displays."""
+    if NIRI:
+        return internal_monitor_niri()
     try:
         raw = subprocess.check_output(['hyprctl', 'monitors', '-j'], text=True, timeout=4)
         for monitor in json.loads(raw):
@@ -67,12 +73,25 @@ def internal_monitor() -> tuple[str | None, int | None]:
     return None, None
 
 
+def internal_monitor_niri() -> tuple[str | None, int | None]:
+    try:
+        raw = subprocess.check_output(['niri', 'msg', '-j', 'outputs'], text=True, timeout=4)
+        for name, output in json.loads(raw).items():
+            if name.startswith('eDP-'):
+                reported = str((output.get('logical') or {}).get('transform', 'normal')).lstrip('_').lower()
+                return name, NIRI_TRANSFORMS.index(reported) if reported in NIRI_TRANSFORMS else None
+    except (OSError, ValueError, subprocess.CalledProcessError, subprocess.TimeoutExpired, AttributeError):
+        pass
+    return None, None
+
+
 def emit(monitor: str | None, degree: int, *, dry_run=False) -> bool:
     if not monitor:
         if dry_run:
             print('No internal eDP monitor detected; nothing changed')
         return False
-    commands = [
+    # niri rotates touch and stylus input along with the output it is mapped to.
+    commands = [['niri', 'msg', 'output', monitor, 'transform', NIRI_TRANSFORMS[degree]]] if NIRI else [
         ['hyprctl', 'keyword', 'monitor', f'{monitor},preferred,auto,1,transform,{degree}'],
         ['hyprctl', 'keyword', 'input:touchdevice:transform', str(degree)],
         ['hyprctl', 'keyword', 'input:tablet:transform', str(degree)],
@@ -126,7 +145,25 @@ def parse_libinput_line(line: str) -> bool | None:
     return (match.group(1) == '1') if match else None
 
 
+def replace_running_daemon() -> None:
+    """Keep one daemon: a previous session's can outlive its compositor and overwrite the state."""
+    try:
+        old = int(PIDFILE.read_text(encoding='utf-8'))
+        if old != os.getpid() and 'palantir-framework12' in Path(f'/proc/{old}/cmdline').read_text(encoding='utf-8'):
+            os.killpg(old, signal.SIGTERM)
+    except (OSError, ValueError):
+        pass
+    # Own process group, so a later replacement also stops our sensor readers.
+    try:
+        os.setpgrp()
+    except OSError:
+        pass
+    PIDFILE.parent.mkdir(parents=True, exist_ok=True)
+    PIDFILE.write_text(str(os.getpid()), encoding='utf-8')
+
+
 def daemon() -> None:
+    replace_running_daemon()
     inbox: queue.Queue = queue.Queue()
     # monitor-sensor obtains orientation; libinput is optional and may lack seat access.
     for cmd, label in [(['monitor-sensor', '--accel'], 'sensor'),
@@ -156,7 +193,7 @@ def daemon() -> None:
             elif source == 'libinput':
                 folded = parse_libinput_line(line)
                 # Explicit compositor bindings have priority over an optional debug process.
-                if folded is not None and switch_source != 'hyprland':
+                if folded is not None and switch_source != 'compositor':
                     switch_state = folded
                     switch_source = 'libinput'
             elif source in ('failed', 'missing') and line == 'sensor':
@@ -164,15 +201,15 @@ def daemon() -> None:
         except queue.Empty:
             pass
 
-        # Hyprland bindings write SWITCH atomically. Polling avoids another process
+        # Compositor bindings write SWITCH atomically. Polling avoids another process
         # requiring exclusive input-device permissions.
         report = read(SWITCH)
         stamp = report.get('timestamp')
-        if (report.get('source') == 'hyprland'
+        if (report.get('source') == 'compositor'
                 and isinstance(stamp, (float, int)) and stamp > last_switch_stamp
                 and isinstance(report.get('tablet'), bool)):
             switch_state = report['tablet']
-            switch_source = 'hyprland'
+            switch_source = 'compositor'
             last_switch_stamp = stamp
 
         requested = read(COMMAND, {'mode': 'auto'})
@@ -182,7 +219,7 @@ def daemon() -> None:
         tablet, transform, selected_orientation = choose_state(
             mode, switch_state, orientation, requested.get('orientation'))
 
-        # Recover after hotplug/resume/Hyprland reload as well as posture changes.
+        # Recover after hotplug/resume/compositor reload as well as posture changes.
         now = time.monotonic()
         due = now - last_probe >= 15
         if due or transform != last_transform or last_monitor is None:
@@ -201,7 +238,7 @@ def daemon() -> None:
 
         warning = None
         if mode == 'auto' and switch_state is None:
-            warning = 'Tablet switch not observed; fold/unfold and check Hyprland switch bindings'
+            warning = 'Tablet switch not observed; fold/unfold and check compositor switch bindings'
         elif mode == 'auto' and tablet and not seen_sensor:
             warning = 'Tablet detected but accelerometer has not reported an orientation'
         if last_sensor_error and not seen_sensor:
@@ -223,13 +260,18 @@ def daemon() -> None:
 
 
 def doctor() -> None:
-    for executable in ('hyprctl', 'monitor-sensor', 'libinput', 'qs'):
+    for executable in ('niri' if NIRI else 'hyprctl', 'monitor-sensor', 'libinput', 'qs'):
         print(f'{executable:18}{shutil.which(executable) or "NOT FOUND"}')
     monitor, transform = internal_monitor()
     print('Internal monitor:', monitor or 'not detected', 'transform:', transform)
     state = read(STATE)
     print('Status:', json.dumps(state or {'message': 'No controller state; verify auto-rotate.sh is running'}, indent=2))
-    print('Last Hyprland switch event:', json.dumps(read(SWITCH) or 'none'))
+    print('Last compositor switch event:', json.dumps(read(SWITCH) or 'none'))
+    if NIRI:
+        config = Path.home() / '.config/niri/config.kdl'
+        print('niri switch bindings:', 'configured' if 'tablet-mode-on' in config.read_text(encoding='utf-8') else 'NOT FOUND')
+        print('Check sensor with: monitor-sensor --accel')
+        return
     try:
         proc = subprocess.run(['hyprctl', 'devices'], capture_output=True, text=True, timeout=3)
         has_switch = any('tablet mode switch' in line.lower() for line in proc.stdout.splitlines())
@@ -266,7 +308,7 @@ def main() -> None:
         daemon()
     elif args.command == 'switch':
         # A switch event is a hardware reading; do NOT modify user's manual mode.
-        save(SWITCH, {'tablet': args.value == 'tablet', 'source': 'hyprland', 'timestamp': time.time()})
+        save(SWITCH, {'tablet': args.value == 'tablet', 'source': 'compositor', 'timestamp': time.time()})
     elif args.command == 'mode':
         previous = read(COMMAND, {'mode': 'auto'})
         state = read(STATE)
