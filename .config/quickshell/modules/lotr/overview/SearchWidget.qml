@@ -9,6 +9,7 @@ import Quickshell
 import qs
 import qs.services
 import qs.modules.common
+import qs.modules.lotr.overview
 import qs.modules.common.widgets
 import qs.modules.common.functions
 
@@ -111,7 +112,8 @@ Item { // Wrapper
         implicitWidth: columnLayout.implicitWidth
         implicitHeight: columnLayout.implicitHeight
         radius: searchBar.height / 2 + searchBar.verticalPadding
-        color: Appearance.colors.colBackgroundSurfaceContainer
+        color: SearchPalette.base
+        border { color: SearchPalette.border; width: 1 }
 
         Behavior on implicitHeight {
             id: searchHeightBehavior
@@ -155,7 +157,7 @@ Item { // Wrapper
                 visible: root.showResults
                 Layout.fillWidth: true
                 height: 1
-                color: Appearance.colors.colOutlineVariant
+                color: SearchPalette.divider
             }
 
             ListView { // App results

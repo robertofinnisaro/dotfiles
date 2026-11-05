@@ -5,6 +5,7 @@ import Quickshell
 import qs
 import qs.services
 import qs.modules.common
+import qs.modules.lotr.overview
 import qs.modules.common.widgets
 import qs.modules.common.functions
 
@@ -35,6 +36,8 @@ RowLayout {
     MaterialShapeWrappedMaterialSymbol {
         id: searchIcon
         Layout.alignment: Qt.AlignVCenter
+        color: SearchPalette.hover
+        colSymbol: SearchPalette.gold
         iconSize: Appearance.font.pixelSize.huge
         shape: switch(root.searchPrefixType) {
             case SearchBar.SearchPrefixType.Action: return MaterialShape.Shape.Pill;
@@ -63,6 +66,11 @@ RowLayout {
         Layout.topMargin: 4
         Layout.bottomMargin: 4
         implicitHeight: 40
+        colBackground: SearchPalette.field
+        color: SearchPalette.text
+        placeholderTextColor: SearchPalette.subtext
+        selectionColor: SearchPalette.active
+        selectedTextColor: SearchPalette.gold
         focus: GlobalStates.overviewOpen
         font.pixelSize: Appearance.font.pixelSize.small
         placeholderText: Translation.tr("Search, calculate or run")
@@ -109,6 +117,7 @@ RowLayout {
             Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "search"]);
         }
         text: "image_search"
+        colText: SearchPalette.gold
         StyledToolTip {
             text: Translation.tr("Google Lens")
         }
@@ -127,7 +136,7 @@ RowLayout {
             text: Translation.tr("Recognize music")
         }
 
-        colText: toggled ? Appearance.colors.colOnPrimary : Appearance.colors.colOnSurfaceVariant
+        colText: toggled ? SearchPalette.base : SearchPalette.gold
         background: MaterialShape {
             RotationAnimation on rotation {
                 running: songRecButton.toggled

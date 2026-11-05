@@ -2,6 +2,7 @@
 import qs
 import qs.services
 import qs.modules.common
+import qs.modules.lotr.overview
 import qs.modules.common.models
 import qs.modules.common.widgets
 import qs.modules.common.functions
@@ -44,13 +45,13 @@ RippleButton {
     implicitHeight: rowLayout.implicitHeight + root.buttonVerticalPadding * 2
     implicitWidth: rowLayout.implicitWidth + root.buttonHorizontalPadding * 2
     buttonRadius: Appearance.rounding.normal
-    colBackground: (root.down || root.keyboardDown) ? Appearance.colors.colPrimaryContainerActive : 
-        ((root.hovered || root.focus) ? Appearance.colors.colPrimaryContainer : 
-        ColorUtils.transparentize(Appearance.colors.colPrimaryContainer, 1))
-    colBackgroundHover: Appearance.colors.colPrimaryContainer
-    colRipple: Appearance.colors.colPrimaryContainerActive
+    colBackground: (root.down || root.keyboardDown) ? SearchPalette.active : 
+        ((root.hovered || root.focus) ? SearchPalette.hover : 
+        ColorUtils.transparentize(SearchPalette.hover, 1))
+    colBackgroundHover: SearchPalette.hover
+    colRipple: SearchPalette.active
 
-    property string highlightPrefix: `<u><font color="${Appearance.colors.colPrimary}">`
+    property string highlightPrefix: `<u><font color="${SearchPalette.gold}">`
     property string highlightSuffix: `</font></u>`
     function highlightContent(content, query) {
         if (!query || query.length === 0 || content == query || fontType === "monospace")
@@ -162,7 +163,7 @@ RippleButton {
             MaterialSymbol {
                 text: root.materialSymbol
                 iconSize: 30
-                color: Appearance.m3colors.m3onSurface
+                color: SearchPalette.text
             }
         }
 
@@ -171,7 +172,7 @@ RippleButton {
             StyledText {
                 text: root.bigText
                 font.pixelSize: Appearance.font.pixelSize.larger
-                color: Appearance.m3colors.m3onSurface
+                color: SearchPalette.text
             }
         }
 
@@ -183,7 +184,7 @@ RippleButton {
             spacing: 0
             StyledText {
                 font.pixelSize: Appearance.font.pixelSize.smaller
-                color: Appearance.colors.colSubtext
+                color: SearchPalette.subtext
                 visible: root.itemType && root.itemType != Translation.tr("App")
                 text: root.itemType
             }
@@ -195,13 +196,13 @@ RippleButton {
                         implicitWidth: activeText.implicitHeight
                         implicitHeight: activeText.implicitHeight
                         radius: Appearance.rounding.full
-                        color: Appearance.colors.colPrimary
+                        color: SearchPalette.gold
                         MaterialSymbol {
                             id: activeText
                             anchors.centerIn: parent
                             text: "check"
                             font.pixelSize: Appearance.font.pixelSize.normal
-                            color: Appearance.m3colors.m3onPrimary
+                            color: SearchPalette.base
                         }
                     }
                 }
@@ -219,7 +220,7 @@ RippleButton {
                     textFormat: Text.StyledText // RichText also works, but StyledText ensures elide work
                     font.pixelSize: Appearance.font.pixelSize.small
                     font.family: Appearance.font.family[root.fontType]
-                    color: Appearance.m3colors.m3onSurface
+                    color: SearchPalette.text
                     horizontalAlignment: Text.AlignLeft
                     elide: Text.ElideRight
                     text: `${root.displayContent}`
@@ -243,7 +244,7 @@ RippleButton {
             visible: (root.hovered || root.focus)
             id: clickAction
             font.pixelSize: Appearance.font.pixelSize.normal
-            color: Appearance.colors.colOnPrimaryContainer
+            color: SearchPalette.gold
             horizontalAlignment: Text.AlignRight
             text: root.itemClickActionName
         }
@@ -263,8 +264,8 @@ RippleButton {
                     implicitHeight: 34
                     implicitWidth: 34
 
-                    colBackgroundHover: Appearance.colors.colSecondaryContainerHover
-                    colRipple: Appearance.colors.colSecondaryContainerActive
+                    colBackgroundHover: SearchPalette.hover
+                    colRipple: SearchPalette.active
 
                     contentItem: Item {
                         id: actionContentItem
@@ -275,7 +276,7 @@ RippleButton {
                             sourceComponent: MaterialSymbol {
                                 text: actionButton.iconName || "video_settings"
                                 font.pixelSize: Appearance.font.pixelSize.hugeass
-                                color: Appearance.m3colors.m3onSurface
+                                color: SearchPalette.text
                             }
                         }
                         Loader {
