@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# Called ONCE from Hyprland; imports this session's Wayland environment to user systemd.
+# Called ONCE from the compositor; imports this session's Wayland environment to user systemd.
 set -u
-for v in WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE XDG_CURRENT_DESKTOP DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS; do
+session_vars=(WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE NIRI_SOCKET XDG_SESSION_TYPE XDG_CURRENT_DESKTOP DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS)
+for v in "${session_vars[@]}"; do
     [[ -n "${!v:-}" ]] && export "$v"
 done
 if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment >/dev/null 2>&1; then
     exec qs -n
 fi
-systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_SESSION_TYPE XDG_CURRENT_DESKTOP DISPLAY XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS || true
+# Clear the other compositor's socket, left behind if the user manager outlived the last session.
+systemctl --user unset-environment HYPRLAND_INSTANCE_SIGNATURE NIRI_SOCKET || true
+systemctl --user import-environment "${session_vars[@]}" || true
 if ! systemctl --user start palantir-quickshell.service; then
     echo 'Unable to start managed Quickshell; falling back to direct launch' >&2
     exec qs -n

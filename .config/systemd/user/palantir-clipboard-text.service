@@ -1,6 +1,7 @@
 [Unit]
 Description=Palantir clipboard text history watcher
 After=graphical-session.target
+PartOf=graphical-session.target
 
 [Service]
 Type=simple

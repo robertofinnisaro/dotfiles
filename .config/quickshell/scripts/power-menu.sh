@@ -20,12 +20,12 @@ if [[ "${1:-}" != --terminal ]]; then
   exit 1
 fi
 printf '\n    THE COUNCIL OF DEPARTURE\n    ------------------------\n\n'
-printf '  [1] Lock screen\n  [2] Suspend\n  [3] Log out of Hyprland\n  [4] Restart computer\n  [5] Shut down computer\n  [0] Cancel\n\n'
+printf '  [1] Lock screen\n  [2] Suspend\n  [3] Log out\n  [4] Restart computer\n  [5] Shut down computer\n  [0] Cancel\n\n'
 read -r -p 'Choose (0-5): ' choice || exit 0
 case "$choice" in
   1) command -v hyprlock >/dev/null 2>&1 && exec hyprlock || { echo 'hyprlock missing'; exit 1; } ;;
   2) action=(systemctl suspend); label='suspend';;
-  3) action=(hyprctl dispatch exit); label='log out';;
+  3) action=("$HOME/.config/quickshell/scripts/session-logout.sh"); label='log out';;
   4) action=(systemctl reboot); label='restart';;
   5) action=(systemctl poweroff); label='shut down';;
   *) exit 0;;

@@ -1,6 +1,7 @@
 [Unit]
 Description=Palantir Quickshell (managed)
 After=graphical-session.target
+PartOf=graphical-session.target
 StartLimitIntervalSec=45
 StartLimitBurst=5
 

@@ -1,0 +1,20 @@
+{
+  "include": "~/.config/waybar/config",
+
+  "modules-left": [
+    "custom/tailscale",
+    "tray",
+    "niri/workspaces",
+    "niri/window"
+  ],
+
+  "niri/workspaces": {
+    "format": "{value}"
+  },
+
+  "niri/window": {
+    "format": "{}",
+    "max-length": 30,
+    "tooltip": false
+  }
+}
