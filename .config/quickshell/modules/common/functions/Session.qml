@@ -7,7 +7,7 @@ Singleton {
     id: root
 
     function closeAllWindows() {
-        HyprlandData.windowList.map(w => w.pid).forEach(pid => {
+        Compositor.windows.map(w => w.pid).forEach(pid => {
             Quickshell.execDetached(["kill", pid]);
         });
     }
@@ -26,7 +26,7 @@ Singleton {
 
     function logout() {
         closeAllWindows();
-        Quickshell.execDetached(["pkill", "-i", "Hyprland"]);
+        Quickshell.execDetached([`${Directories.scriptPath}/session-logout.sh`]);
     }
 
     function launchTaskManager() {

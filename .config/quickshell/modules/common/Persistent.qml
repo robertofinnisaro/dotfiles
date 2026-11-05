@@ -17,7 +17,8 @@ Singleton {
 
     onReadyChanged: {
         root.previousHyprlandInstanceSignature = root.states.hyprlandInstanceSignature
-        root.states.hyprlandInstanceSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") || ""
+        // Any value unique to this compositor session; NIRI_SOCKET includes niri's pid.
+        root.states.hyprlandInstanceSignature = Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE") || Quickshell.env("NIRI_SOCKET") || ""
     }
 
     Timer {

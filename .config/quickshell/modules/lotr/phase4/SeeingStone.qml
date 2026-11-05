@@ -2,30 +2,26 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Quickshell.Hyprland
 import Quickshell.Wayland
+import qs.services
 
 Scope {
     id: stone
     property bool opened: false
-    property string appName: "No active chamber"
-    property string appTitle: "Open a window to inspect its information"
-    property string workspaceName: "—"
+    readonly property string appName: Compositor.activeWindow?.appId || "No active chamber"
+    readonly property string appTitle: Compositor.activeWindow?.title || "Open a window to inspect its information"
+    readonly property string workspaceName: Compositor.focusedWorkspaceName
     property string realmName: "—"
-    property string lastError: ""
 
     function showStone() { stone.opened = true; stone.refresh(); }
     function hideStone() { stone.opened = false; }
     function toggleStone() { if (stone.opened) stone.hideStone(); else stone.showStone(); }
     function refresh() {
         if (!stone.opened) return;
-        if (!windowRead.running) windowRead.running = true;
         if (!realmRead.running) realmRead.running = true;
     }
-    function command(dispatch) {
-        stone.hideStone();
-        Hyprland.dispatch(dispatch);
-    }
+    function toggleFloating() { stone.hideStone(); Compositor.toggleFloating(); }
+    function toggleFullscreen() { stone.hideStone(); Compositor.toggleFullscreen(); }
     function launch(args) { stone.hideStone(); Quickshell.execDetached(args); }
 
     IpcHandler {
@@ -33,22 +29,6 @@ Scope {
         function open(): void { stone.showStone(); }
         function close(): void { stone.hideStone(); }
         function toggle(): void { stone.toggleStone(); }
-    }
-    Process {
-        id: windowRead
-        command: ["hyprctl", "-j", "activewindow"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const item = JSON.parse(this.text);
-                    stone.appName = item.class || "No active chamber";
-                    stone.appTitle = item.title || "No focused window";
-                    stone.workspaceName = item.workspace && item.workspace.name ? item.workspace.name : "—";
-                    stone.lastError = "";
-                } catch (e) { stone.lastError = "Unable to read active-window details"; }
-            }
-        }
-        onExited: (code, status) => { if (code !== 0) stone.lastError = "Hyprland query unavailable"; }
     }
     Process {
         id: realmRead
@@ -96,14 +76,13 @@ Scope {
                 Text { text: stone.appName.toUpperCase(); color: "#d2e8d9"; font { pixelSize: 16; bold: true } elide: Text.ElideRight; width: parent.width }
                 Text { text: stone.appTitle; color: "#a8c1b0"; font.pixelSize: 12; width: parent.width; elide: Text.ElideRight; maximumLineCount: 2; wrapMode: Text.Wrap }
                 Text { text: "REALM  " + stone.realmName.toUpperCase() + "     WORKSPACE  " + stone.workspaceName; color: "#ead19e"; font.pixelSize: 11; elide: Text.ElideRight; width: parent.width }
-                Text { visible: stone.lastError !== ""; text: stone.lastError; color: "#e2a897"; font.pixelSize: 11 }
                 Grid {
                     width: parent.width; columns: 2; spacing: 9
                     Repeater {
                         model: [
                             { title: "Float", action: "togglefloating", desc: "Window mode" },
                             { title: "Fullscreen", action: "fullscreen", desc: "Expand view" },
-                            { title: "Map", action: "map", desc: "Six realms" },
+                            { title: "Map", action: "map", desc: "Five lands" },
                             { title: "Field Atlas", action: "atlas", desc: "Daily operations" }
                         ]
                         delegate: Rectangle {
@@ -121,7 +100,8 @@ Scope {
                                 onClicked: {
                                     if (modelData.action === "map") stone.launch(["qs", "ipc", "call", "atlasMap", "open"]);
                                     else if (modelData.action === "atlas") stone.launch(["qs", "ipc", "call", "overlay", "toggle"]);
-                                    else stone.command(modelData.action);
+                                    else if (modelData.action === "fullscreen") stone.toggleFullscreen();
+                                    else stone.toggleFloating();
                                 }
                             }
                         }

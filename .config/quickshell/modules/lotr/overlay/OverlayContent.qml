@@ -6,7 +6,6 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
-import Quickshell.Hyprland
 import qs
 import qs.services
 import qs.modules.lotr.overlay
@@ -27,9 +26,9 @@ Item {
 
     function close() { GlobalStates.overlayOpen = false; }
 
-    function executeHypr(command) {
+    function goToWorkspace(slot) {
         close();
-        Hyprland.dispatch(command);
+        Compositor.goToSlot(slot);
     }
 
     function launch(command) {
@@ -47,9 +46,9 @@ Item {
         if (event.key === Qt.Key_Escape) {
             root.close();
             event.accepted = true;
-        } else if (!notesEdit.activeFocus && event.key >= Qt.Key_1 && event.key <= Qt.Key_6
+        } else if (!notesEdit.activeFocus && event.key >= Qt.Key_1 && event.key <= Qt.Key_5
                    && !(event.modifiers & (Qt.ControlModifier | Qt.AltModifier))) {
-            root.executeHypr("workspace " + (event.key - Qt.Key_0));
+            root.goToWorkspace(event.key - Qt.Key_0);
             event.accepted = true;
         }
     }
@@ -61,7 +60,6 @@ Item {
                 GlobalStates.commandDeckOpen = false;
                 GlobalStates.overviewOpen = false;
                 root.historyRevealed = false;
-                Hyprland.refreshToplevels();
             } else {
                 root.atlasState.flushNotes();
             }
@@ -171,27 +169,27 @@ Item {
                     color: root.slab; radius: 12; border.color: "#345b5b"
                     Column {
                         anchors.fill: parent; anchors.margins: 15; spacing: 13
-                        Text { text: "I  /  THE SIX REALMS"; color: root.gold; font { pixelSize: 12; bold: true; letterSpacing: 1.1 } }
+                        Text { text: "I  /  THE FIVE LANDS"; color: root.gold; font { pixelSize: 12; bold: true; letterSpacing: 1.1 } }
                         Text {
-                            text: "CURRENT WORKSPACE  " + (Hyprland.focusedWorkspace?.name ?? "—")
+                            text: "CURRENT WORKSPACE  " + Compositor.focusedWorkspaceName
                             color: root.muted; font.pixelSize: 11
                         }
                         Grid {
                             id: realms
-                            width: parent.width; columns: width < 390 ? 3 : 6; spacing: 7
+                            width: parent.width; columns: width < 390 ? 3 : 5; spacing: 7
                             Repeater {
-                                model: 6
+                                model: Compositor.workspaceNames.length
                                 delegate: AtlasButton {
                                     required property int index
                                     width: (realms.width - (realms.columns - 1) * realms.spacing) / realms.columns
                                     height: 38
                                     title: String(index + 1)
-                                    selected: Hyprland.focusedWorkspace?.id === index + 1
-                                    onActivated: root.executeHypr("workspace " + (index + 1))
+                                    selected: Compositor.focusedSlot === index + 1
+                                    onActivated: root.goToWorkspace(index + 1)
                                 }
                             }
                         }
-                        Text { text: "Click a realm or press 1–6 • Super+Tab opens Atlas overview"; color: root.muted; font.pixelSize: 10; wrapMode: Text.WordWrap; width: parent.width }
+                        Text { text: "Click a land or press 1–5 • Super+Tab opens the overview"; color: root.muted; font.pixelSize: 10; wrapMode: Text.WordWrap; width: parent.width }
                     }
                 }
 
@@ -230,13 +228,13 @@ Item {
                         Text { text: "III  /  THE ACTIVE CHAMBER"; color: root.gold; font { pixelSize: 12; bold: true; letterSpacing: 1.1 } }
                         Text {
                             width: parent.width
-                            text: Hyprland.activeToplevel?.title || "No active window"
+                            text: Compositor.activeWindow?.title || "No active window"
                             color: root.emerald; font.pixelSize: 13; elide: Text.ElideRight
                         }
                         Row {
                             width: parent.width; spacing: 7
-                            AtlasButton { width: (parent.width - 7) / 2; height: 38; title: "FLOAT / TILE"; enabled: Hyprland.activeToplevel !== null; onActivated: root.executeHypr("togglefloating") }
-                            AtlasButton { width: (parent.width - 7) / 2; height: 38; title: "FULLSCREEN"; enabled: Hyprland.activeToplevel !== null; onActivated: root.executeHypr("fullscreen") }
+                            AtlasButton { width: (parent.width - 7) / 2; height: 38; title: "FLOAT / TILE"; enabled: Compositor.activeWindow !== null; onActivated: { root.close(); Compositor.toggleFloating(); } }
+                            AtlasButton { width: (parent.width - 7) / 2; height: 38; title: "FULLSCREEN"; enabled: Compositor.activeWindow !== null; onActivated: { root.close(); Compositor.toggleFullscreen(); } }
                         }
                         Text { text: "The overlay closes before applying a window command"; color: root.muted; font.pixelSize: 10; width: parent.width; wrapMode: Text.WordWrap }
                     }

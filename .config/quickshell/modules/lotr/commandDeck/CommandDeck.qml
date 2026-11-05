@@ -470,7 +470,7 @@ Scope {
                         Text { text: "Privacy: microphone status reflects PipeWire's default input mute state, not hardware camera access."; width: parent.width; wrapMode: Text.WordWrap; color: "#819c91"; font.pixelSize: 11 }
                     }
 
-                    // REALMS / Changes are reversible within the current Hyprland session.
+                    // REALMS / Changes are reversible within the current session.
                     Column {
                         visible: root.activeTab === 2
                         width: parent.width; spacing: 12
@@ -485,7 +485,7 @@ Scope {
                         }
                         DeckTile {
                             width: parent.width; height: 90
-                            glyph: "✧"; title: "Rivendell"; detail: "Restore your original Hyprland effects"
+                            glyph: "✧"; title: "Rivendell"; detail: "Restore your original effects"
                             selected: root.realm === "rivendell"
                             enabledAction: !root.realmBusy
                             onActivated: root.setRealm("rivendell")
