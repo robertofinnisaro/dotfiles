@@ -26,8 +26,8 @@ Item {
 
     function close() { GlobalStates.overlayOpen = false; }
 
-    // Close only once the slide has finished. Closing sooner uncovers the old window under
-    // the pointer, and focus-follows-mouse can focus it and pull the view back.
+    // Switch first and close once the slide has finished. Closing first could lose the
+    // switch, seen when niri's overview had just been toggled by its hot corner.
     function goToWorkspace(slot) {
         Compositor.goToSlot(slot);
         closeAfterMove.restart();
@@ -356,7 +356,11 @@ Item {
                             AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "FILES"; onActivated: root.launch(["pcmanfm-qt"]) }
                             AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "LOCK SCREEN"; onActivated: root.launch(["hyprlock"]) }
                             AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "COMMAND DECK"; onActivated: root.launch(["qs", "ipc", "call", "deck", "open"]) }
-                            AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "WORKSPACE ATLAS"; onActivated: { root.close(); GlobalStates.overviewOpen = true; } }
+                            AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "WORKSPACE ATLAS"; onActivated: {
+                                root.close();
+                                if (Compositor.isNiri) Compositor.toggleOverview();
+                                else GlobalStates.overviewOpen = true;
+                            } }
                             AtlasButton { width: (orders.width - (orders.columns - 1) * 7) / orders.columns; height: 42; title: "CAPTURE AREA"; onActivated: root.launch(["bash", "-lc", "sleep 0.25; \"$HOME/.config/quickshell/scripts/capture-region.sh\""]) }
                         }
                     }

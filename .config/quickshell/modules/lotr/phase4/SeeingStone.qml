@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import qs.services
+import qs.modules.common.widgets
 
 Scope {
     id: stone
@@ -41,6 +42,11 @@ Scope {
         }
     }
     Timer { interval: 3500; repeat: true; running: stone.opened; onTriggered: stone.refresh() }
+
+    ClickAwayLayer {
+        active: stone.opened
+        onDismissed: stone.hideStone()
+    }
 
     PanelWindow {
         id: panel

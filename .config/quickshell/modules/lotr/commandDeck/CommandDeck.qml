@@ -8,6 +8,7 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs
 import qs.services
+import qs.modules.common.widgets
 
 Scope {
     id: root
@@ -186,6 +187,11 @@ Scope {
     Timer { id: refreshLater; interval: 700; onTriggered: root.refreshStatus() }
     Timer { id: clearCancel; interval: 5500; onTriggered: root.confirmClear = false }
     Timer { interval: 20000; repeat: true; running: GlobalStates.commandDeckOpen; onTriggered: root.refreshStatus() }
+
+    ClickAwayLayer {
+        active: GlobalStates.commandDeckOpen
+        onDismissed: root.setOpen(false)
+    }
 
     PanelWindow {
         id: panel
@@ -559,7 +565,11 @@ Scope {
                             DeckTile {
                                 width: (parent.width - 9)/2; height: 80
                                 glyph: "▦"; title: "Atlas"; detail: "Workspaces"
-                                onActivated: { root.setOpen(false); GlobalStates.overviewOpen = true; }
+                                onActivated: {
+                                    root.setOpen(false);
+                                    if (Compositor.isNiri) Compositor.toggleOverview();
+                                    else GlobalStates.overviewOpen = true;
+                                }
                             }
                             DeckTile {
                                 width: (parent.width - 9)/2; height: 80

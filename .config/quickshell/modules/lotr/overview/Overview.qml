@@ -14,7 +14,7 @@ import Quickshell.Hyprland
 Scope {
     id: overviewScope
     property bool dontAutoCancelSearch: false
-    // niri has no HyprlandFocusGrab, and Super+Tab uses its own overview instead of the workspace grid.
+    // niri has no HyprlandFocusGrab, and uses its own overview instead of the workspace grid.
     readonly property bool onNiri: !!Quickshell.env("NIRI_SOCKET")
 
     PanelWindow {
@@ -25,7 +25,7 @@ Scope {
         visible: GlobalStates.overviewOpen
 
         WlrLayershell.namespace: "quickshell:overview"
-        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.layer: overviewScope.onNiri ? WlrLayer.Overlay : WlrLayer.Top
         WlrLayershell.keyboardFocus: overviewScope.onNiri && GlobalStates.overviewOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
         color: "transparent"
 
@@ -111,6 +111,11 @@ Scope {
         }
     }
 
+    ClickAwayLayer {
+        active: overviewScope.onNiri && GlobalStates.overviewOpen
+        onDismissed: GlobalStates.overviewOpen = false
+    }
+
     function toggleClipboard() {
         if (GlobalStates.overviewOpen && overviewScope.dontAutoCancelSearch) {
             GlobalStates.overviewOpen = false;
@@ -138,7 +143,8 @@ Scope {
             GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
         }
         function workspacesToggle(): void {
-            GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
+            if (overviewScope.onNiri) Compositor.toggleOverview();
+            else GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
         }
         function close(): void {
             GlobalStates.overviewOpen = false;

@@ -56,6 +56,10 @@ Singleton {
         else Hyprland.dispatch("togglefloating");
     }
 
+    function toggleOverview() {
+        niriAction(["toggle-overview"]);
+    }
+
     function toggleFullscreen() {
         if (root.isNiri) niriActionOnActiveWindow("fullscreen-window");
         else Hyprland.dispatch("fullscreen");

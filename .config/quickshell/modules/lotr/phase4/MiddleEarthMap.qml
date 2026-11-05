@@ -30,7 +30,7 @@ Scope {
         Compositor.goToSlot(num);
         atlas.selectedWorkspace = num;
     }
-    // Close only once the slide has finished, or focus-follows-mouse can pull the view back.
+    // Switch first and close once the slide has finished, the same as the Field Atlas.
     function focusClient(id) {
         Compositor.focusWindow(id);
         closeAfterMove.restart();
