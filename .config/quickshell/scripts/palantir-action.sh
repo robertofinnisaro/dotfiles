@@ -8,7 +8,10 @@ case "${1:-}" in
   keyboard) args=(osk toggle);;
   clipboard) args=(search clipboardToggle);;
   launcher) args=(search toggle);;
-  *) printf 'Usage: %s {deck|overlay|overview|keyboard|clipboard|launcher}\n' "$0" >&2; exit 2;;
+  map) args=(atlasMap toggle);;
+  stone) args=(seeingStone toggle);;
+  keys) args=(redBook toggle);;
+  *) printf 'Usage: %s {deck|overlay|overview|keyboard|clipboard|launcher|map|stone|keys}\n' "$0" >&2; exit 2;;
 esac
 if ! command -v qs >/dev/null 2>&1; then
   echo 'Palantír: Quickshell CLI (qs) is not installed/in PATH.' >&2

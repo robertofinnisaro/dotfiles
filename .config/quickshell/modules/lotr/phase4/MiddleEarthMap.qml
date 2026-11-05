@@ -30,10 +30,12 @@ Scope {
         Compositor.goToSlot(num);
         atlas.selectedWorkspace = num;
     }
+    // Close only once the slide has finished, or focus-follows-mouse can pull the view back.
     function focusClient(id) {
-        atlas.closeMap();
         Compositor.focusWindow(id);
+        closeAfterMove.restart();
     }
+    Timer { id: closeAfterMove; interval: 450; onTriggered: atlas.closeMap() }
 
     IpcHandler {
         target: "atlasMap"
@@ -144,7 +146,7 @@ Scope {
                                     Text { text: region.mark + "   /   " + region.name; color: "#f0d4a1"; font { pixelSize: 15; bold: true; family: "Cinzel" } elide: Text.ElideRight; width: parent.width }
                                     Text { text: region.subtitle; color: "#b4c8ba"; font.pixelSize: 11 }
                                     Item { width: 1; height: 4 }
-                                    Text { text: Compositor.windowsInSlot(number).length + " OPEN WINDOWS"; color: "#dcece1"; font.pixelSize: 12 }
+                                    Text { text: Compositor.windowsInSlot(number).length + (Compositor.windowsInSlot(number).length === 1 ? " OPEN WINDOW" : " OPEN WINDOWS"); color: "#dcece1"; font.pixelSize: 12 }
                                     Text { text: isCurrent ? "● ACTIVE WORKSPACE" : "TAP TO TRAVEL"; color: isCurrent ? "#f5d58d" : "#9ab5a8"; font { pixelSize: 11; bold: true } }
                                 }
                                 MouseArea {

@@ -15,5 +15,6 @@ Scope {
     // ORTHANC PHASE 4 / Extra navigational scopes
     PanelLoader { component: MiddleEarthMap {} }
     PanelLoader { component: SeeingStone {} }
+    PanelLoader { component: RedBook {} }
     PanelLoader { component: Overview {} }
 }

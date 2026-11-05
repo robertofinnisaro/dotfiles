@@ -26,10 +26,13 @@ Item {
 
     function close() { GlobalStates.overlayOpen = false; }
 
+    // Close only once the slide has finished. Closing sooner uncovers the old window under
+    // the pointer, and focus-follows-mouse can focus it and pull the view back.
     function goToWorkspace(slot) {
-        close();
         Compositor.goToSlot(slot);
+        closeAfterMove.restart();
     }
+    Timer { id: closeAfterMove; interval: 450; onTriggered: root.close() }
 
     function launch(command) {
         close();
