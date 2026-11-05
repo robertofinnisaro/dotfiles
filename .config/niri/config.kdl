@@ -52,12 +52,13 @@ layout {
     // Transparent so the wallpaper shows through; see the layer-rule below.
     background-color "transparent"
     center-focused-column "never"
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 1.0; }
 
     preset-column-widths {
         proportion 0.33333
         proportion 0.5
         proportion 0.66667
+        proportion 1.0
     }
 
     focus-ring {
@@ -94,6 +95,9 @@ hotkey-overlay {
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 window-rule {
+    // Ignore maximize requests when apps open, so they keep their gaps.
+    open-maximized-to-edges false
+
     geometry-corner-radius 18
     clip-to-geometry true
 
@@ -211,6 +215,7 @@ binds {
     Mod+R { switch-preset-column-width; }
     Mod+F { maximize-column; }
     Mod+Shift+F { fullscreen-window; }
+    Mod+Ctrl+F { maximize-window-to-edges; }
     Mod+C { center-column; }
     Mod+Comma { consume-window-into-column; }
     Mod+Period { expel-window-from-column; }
