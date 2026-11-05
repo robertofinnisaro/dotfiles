@@ -3,6 +3,7 @@
 echo "Installing dotfiles..."
 
 ln -sf ~/dotfiles/.config/hypr ~/.config/hypr
+ln -sfn ~/dotfiles/.config/niri ~/.config/niri
 ln -sf ~/dotfiles/.config/waybar ~/.config/waybar
 ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
 ln -sf ~/dotfiles/.config/quickshell ~/.config/quickshell
