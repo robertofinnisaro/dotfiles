@@ -65,7 +65,7 @@
     color: #ffc5a8;
     background-color: rgba(148, 69, 48, 0.23);
 }
-#hyprland-window { color: @faded; margin-left: 6px; }
+#window { color: @faded; margin-left: 6px; }
 tooltip {
     background-color: #122221;
     color: @mithril;

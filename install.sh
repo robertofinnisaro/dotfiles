@@ -1,12 +1,22 @@
 #!/bin/bash
+set -euo pipefail
+
+link() {
+    local target="$HOME/.config/$1"
+    # ln would put the link inside a real folder, so move any real one out of the way first.
+    if [[ -e "$target" && ! -L "$target" ]]; then
+        local backup="$target.bak-$(date +%Y%m%d-%H%M%S)"
+        mv "$target" "$backup"
+        echo "Moved existing $target to $backup"
+    fi
+    ln -sfn "$HOME/dotfiles/.config/$1" "$target"
+}
 
 echo "Installing dotfiles..."
 
-ln -sf ~/dotfiles/.config/hypr ~/.config/hypr
-ln -sfn ~/dotfiles/.config/niri ~/.config/niri
-ln -sf ~/dotfiles/.config/waybar ~/.config/waybar
-ln -sf ~/dotfiles/.config/alacritty ~/.config/alacritty
-ln -sf ~/dotfiles/.config/quickshell ~/.config/quickshell
-ln -sf ~/dotfiles/.config/fuzzel ~/.config/fuzzel
+mkdir -p "$HOME/.config"
+for config in niri hypr waybar alacritty quickshell fuzzel wlogout systemd; do
+    link "$config"
+done
 
 echo "Done."
