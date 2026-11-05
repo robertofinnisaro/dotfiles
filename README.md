@@ -79,13 +79,13 @@ Folding into tablet mode rotates the screen to match the accelerometer, and touc
 Rotation has three modes: `auto`, `tablet` and `laptop`. Manual `tablet` or `laptop` mode ignores the hinge until you change it, and `Super + Shift + T` switches between those two. To go back to following the hinge:
 
 ```bash
-python3 ~/.config/hypr/scripts/palantir-framework12.py mode auto
+python3 ~/.config/framework/palantir-framework12.py mode auto
 ```
 
 To check the rotation controller and sensors:
 
 ```bash
-python3 ~/.config/hypr/scripts/palantir-framework12.py doctor
+python3 ~/.config/framework/palantir-framework12.py doctor
 ```
 
 ## Installation
@@ -129,6 +129,7 @@ The config has two values tied to this machine, because niri doesn't expand vari
 │   ├── services/      Compositor.qml is the shell's link to niri or Hyprland
 │   └── scripts/       Keybind actions, realms, keybind list, logout
 ├── waybar/            config (Hyprland), config-niri, config-niri-portrait
+├── framework/         Framework 12 rotation and tablet-mode controller
 ├── hypr/              Hyprland config, hyprlock, and scripts both compositors share
 ├── systemd/user/      Services for the shell and clipboard history
 ├── wlogout/           Power menu
@@ -136,4 +137,4 @@ The config has two values tied to this machine, because niri doesn't expand vari
 └── fuzzel/
 ```
 
-`.config/hypr/scripts/` still holds the rotation controller and session startup that niri uses, so don't delete that folder without moving them first.
+`.config/hypr/scripts/` still holds the session startup that niri uses, so don't delete that folder without moving it first.

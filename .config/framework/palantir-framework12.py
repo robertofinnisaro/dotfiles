@@ -297,7 +297,7 @@ def doctor() -> None:
     except (OSError, subprocess.TimeoutExpired):
         print('Hyprland switch bindings: unknown')
     print('Check sensor with: monitor-sensor --accel')
-    print('Switch state with: python3 ~/.config/hypr/scripts/palantir-framework12.py status')
+    print('Switch state with: python3 ~/.config/framework/palantir-framework12.py status')
     print('Framework hardware checks: https://github.com/FrameworkComputer/linux-docs/blob/main/framework12/debugging.md')
 
 

@@ -51,7 +51,7 @@ Scope {
     }
     function setFrameworkMode(mode) {
         if (["auto", "tablet", "laptop"].indexOf(mode) < 0) return;
-        Quickshell.execDetached(["bash", "-lc", "python3 \"$HOME/.config/hypr/scripts/palantir-framework12.py\" mode " + mode]);
+        Quickshell.execDetached(["bash", "-lc", "python3 \"$HOME/.config/framework/palantir-framework12.py\" mode " + mode]);
         refreshLater.restart();
     }
     function toggleKeyboard() {
@@ -120,7 +120,7 @@ Scope {
     }
     Process {
         id: frameworkRead
-        command: ["bash", "-lc", "python3 \"$HOME/.config/hypr/scripts/palantir-framework12.py\" status"]
+        command: ["bash", "-lc", "python3 \"$HOME/.config/framework/palantir-framework12.py\" status"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {

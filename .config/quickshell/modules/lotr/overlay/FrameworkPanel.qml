@@ -18,14 +18,14 @@ Rectangle {
     property bool switchDetected: false
 
     function setMode(value) {
-        Quickshell.execDetached(["bash", "-lc", "python3 \"$HOME/.config/hypr/scripts/palantir-framework12.py\" mode " + value]);
+        Quickshell.execDetached(["bash", "-lc", "python3 \"$HOME/.config/framework/palantir-framework12.py\" mode " + value]);
         root.mode = value;
         refreshDelay.restart();
     }
 
     Process {
         id: statusProcess
-        command: ["bash", "-lc", "python3 \"$HOME/.config/hypr/scripts/palantir-framework12.py\" status"]
+        command: ["bash", "-lc", "python3 \"$HOME/.config/framework/palantir-framework12.py\" status"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {

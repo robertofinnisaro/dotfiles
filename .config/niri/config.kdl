@@ -219,7 +219,7 @@ environment {
 spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/robertofinnisaro/Pictures/Wallpapers/wallpaper-orthanc.jpg"
 spawn-sh-at-startup "waybar -c ~/.config/waybar/config-niri"
 spawn-at-startup "~/.config/hypr/scripts/palantir-session.sh"
-spawn-at-startup "~/.config/hypr/scripts/auto-rotate.sh"
+spawn-at-startup "~/.config/framework/auto-rotate.sh"
 // Lock after 10 minutes idle and before sleep; screen off after 15.
 spawn-at-startup "swayidle" "-w" "timeout" "600" "~/.config/niri/scripts/lock.sh" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "~/.config/niri/scripts/lock.sh" "lock" "~/.config/niri/scripts/lock.sh"
 spawn-at-startup "steam" "-silent"
@@ -229,8 +229,8 @@ spawn-at-startup "fw-fanctrl-gui" "--background"
 
 // The hinge sensor reports tablet mode; palantir-framework12.py does the rotating.
 switch-events {
-    tablet-mode-on { spawn "sh" "-c" "python3 ~/.config/hypr/scripts/palantir-framework12.py switch tablet"; }
-    tablet-mode-off { spawn "sh" "-c" "python3 ~/.config/hypr/scripts/palantir-framework12.py switch laptop"; }
+    tablet-mode-on { spawn "sh" "-c" "python3 ~/.config/framework/palantir-framework12.py switch tablet"; }
+    tablet-mode-off { spawn "sh" "-c" "python3 ~/.config/framework/palantir-framework12.py switch laptop"; }
 }
 
 ///////////////////
@@ -267,7 +267,7 @@ binds {
     Mod+Shift+F hotkey-overlay-title="Fullscreen, covers Waybar" { fullscreen-window; }
     Mod+H hotkey-overlay-title="Hide or show all windows" { spawn "~/.config/niri/scripts/show-desktop.sh"; }
     Mod+Tab repeat=false hotkey-overlay-title="Overview of all workspaces" { toggle-overview; }
-    Mod+Shift+T hotkey-overlay-title="Switch tablet or laptop mode" { spawn-sh "python3 ~/.config/hypr/scripts/palantir-framework12.py mode toggle"; }
+    Mod+Shift+T hotkey-overlay-title="Switch tablet or laptop mode" { spawn-sh "python3 ~/.config/framework/palantir-framework12.py mode toggle"; }
 
     // Move focus
     Mod+Left hotkey-overlay-title="Focus column to the left" { focus-column-left; }

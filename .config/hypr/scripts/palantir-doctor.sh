@@ -25,7 +25,7 @@ for program in python3 monitor-sensor libinput cliphist wl-paste wl-copy powerpr
   printf '%-20s %s\n' "$program" "$(command -v "$program" || printf 'missing')"
 done
 printf '\n=== Framework sensors & switches ===\n'
-python3 "$HOME/.config/hypr/scripts/palantir-framework12.py" doctor
+python3 "$HOME/.config/framework/palantir-framework12.py" doctor
 for module in cros_ec_sensors pinctrl_tigerlake soc_button_array; do
   if [[ -d "/sys/module/$module" ]]; then echo "$module: present"; else echo "$module: absent or built-in"; fi
 done

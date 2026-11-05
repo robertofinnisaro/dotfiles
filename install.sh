@@ -15,7 +15,7 @@ link() {
 echo "Installing dotfiles..."
 
 mkdir -p "$HOME/.config"
-for config in niri hypr waybar alacritty quickshell fuzzel wlogout systemd; do
+for config in niri hypr framework waybar alacritty quickshell fuzzel wlogout systemd; do
     link "$config"
 done
 
