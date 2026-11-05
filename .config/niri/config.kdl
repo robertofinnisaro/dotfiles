@@ -126,19 +126,61 @@ layer-rule {
 /// WINDOWS AND WORKSPACES  ///
 ///////////////////////////////
 
-// The six realms of the Map of Middle-earth.
-workspace "shire"
-workspace "rivendell"
-workspace "rohan"
-workspace "gondor"
-workspace "moria"
-workspace "orthanc"
+// Named by purpose. Rivendell and Mordor share their names with the matching
+// performance realms, which are still chosen by hand in the Palantir.
+workspace "rivendell" // dev
+workspace "bree"      // browser
+workspace "mordor"    // gaming
+workspace "gondor"    // notes
+workspace "shire"     // general, no assigned apps
 // Stands in for Hyprland's special workspace; see scripts/scratchpad.sh.
 workspace "magic"
 
+window-rule {
+    match app-id="^com\\.anthropic\\.Claude$"
+    match app-id="^(codium|VSCodium)$"
+    match app-id="^MATLAB"
+    match title="^MATLAB R[0-9]"
+    open-on-workspace "rivendell"
+}
+
+window-rule {
+    match app-id="^brave-browser$"
+    open-on-workspace "bree"
+}
+
+window-rule {
+    match app-id="^steam$"
+    match app-id="^steam_app_"
+    match app-id="^org\\.prismlauncher\\.PrismLauncher$"
+    match app-id="^Minecraft"
+    open-on-workspace "mordor"
+}
+
+window-rule {
+    match app-id="^(obsidian|md\\.obsidian\\.Obsidian)$"
+    open-on-workspace "gondor"
+}
+
+// Take the view along when one of those apps is opened, so it isn't left out of
+// sight. Not at login, and not for pop-ups such as Steam's friend notifications.
+window-rule {
+    match app-id="^com\\.anthropic\\.Claude$"
+    match app-id="^(codium|VSCodium)$"
+    match title="^MATLAB R[0-9]"
+    match app-id="^brave-browser$"
+    match app-id="^steam$" title="^Steam$"
+    match app-id="^steam_app_"
+    match app-id="^org\\.prismlauncher\\.PrismLauncher$"
+    match app-id="^Minecraft"
+    match app-id="^(obsidian|md\\.obsidian\\.Obsidian)$"
+    exclude at-startup=true
+    open-focused true
+}
+
 // --- MATLAB popup menus/dialogs: float ---
 window-rule {
-    match app-id="MATLAB R2024b - academic use" title="^$"
+    match app-id="^MATLAB" title="^$"
     match title="^Add to Path$"
     match title="^Preferences$"
     match title="^Open File$"
@@ -222,21 +264,19 @@ binds {
     Mod+Minus { set-column-width "-10%"; }
     Mod+Equal { set-column-width "+10%"; }
 
-    // Switch realm with Mod + [1-6]
-    Mod+1 { focus-workspace "shire"; }
-    Mod+2 { focus-workspace "rivendell"; }
-    Mod+3 { focus-workspace "rohan"; }
+    // Switch workspace with Mod + [1-5]
+    Mod+1 { focus-workspace "rivendell"; }
+    Mod+2 { focus-workspace "bree"; }
+    Mod+3 { focus-workspace "mordor"; }
     Mod+4 { focus-workspace "gondor"; }
-    Mod+5 { focus-workspace "moria"; }
-    Mod+6 { focus-workspace "orthanc"; }
+    Mod+5 { focus-workspace "shire"; }
 
-    // Move the focused window to a realm with Mod + Shift + [1-6]
-    Mod+Shift+1 { move-window-to-workspace "shire"; }
-    Mod+Shift+2 { move-window-to-workspace "rivendell"; }
-    Mod+Shift+3 { move-window-to-workspace "rohan"; }
+    // Move the focused window to a workspace with Mod + Shift + [1-5]
+    Mod+Shift+1 { move-window-to-workspace "rivendell"; }
+    Mod+Shift+2 { move-window-to-workspace "bree"; }
+    Mod+Shift+3 { move-window-to-workspace "mordor"; }
     Mod+Shift+4 { move-window-to-workspace "gondor"; }
-    Mod+Shift+5 { move-window-to-workspace "moria"; }
-    Mod+Shift+6 { move-window-to-workspace "orthanc"; }
+    Mod+Shift+5 { move-window-to-workspace "shire"; }
 
     // Scratchpad
     Mod+S { spawn "~/.config/niri/scripts/scratchpad.sh"; }
