@@ -2,12 +2,13 @@ pragma Singleton
 
 import QtQuick
 import qs.modules.common
+import qs.services
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 
 /**
- * Simple hyprsunset service with automatic mode.
+ * Simple night light service with automatic mode: hyprsunset on Hyprland, wlsunset on niri.
  * In theory we don't need this because hyprsunset has a config file, but it somehow doesn't work.
  * It should also be possible to control it via hyprctl, but it doesn't work consistently either so we're just killing and launching.
  */
@@ -20,6 +21,9 @@ Singleton {
     property bool shouldBeOn
     property bool firstEvaluation: true
     property bool active: false
+
+    // wlsunset needs a day and a night temperature; one kelvin apart keeps the display constant.
+    readonly property string niriStart: `command -v wlsunset >/dev/null || { notify-send 'Night Sight unavailable' 'Install it with: sudo pacman -S wlsunset'; exit 1; }; pidof wlsunset || exec wlsunset -t ${colorTemperature} -T ${colorTemperature + 1} -S 06:00 -s 18:00`
 
     property int fromHour: Number(from.split(":")[0])
     property int fromMinute: Number(from.split(":")[1])
@@ -82,13 +86,14 @@ Singleton {
     function enable() {
         root.active = true;
         // console.log("[Hyprsunset] Enabling");
-        Quickshell.execDetached(["bash", "-c", `pidof hyprsunset || hyprsunset --temperature ${root.colorTemperature}`]);
+        if (Compositor.isNiri) Quickshell.execDetached(["bash", "-c", root.niriStart]);
+        else Quickshell.execDetached(["bash", "-c", `pidof hyprsunset || hyprsunset --temperature ${root.colorTemperature}`]);
     }
 
     function disable() {
         root.active = false;
         // console.log("[Hyprsunset] Disabling");
-        Quickshell.execDetached(["bash", "-c", `pkill hyprsunset`]);
+        Quickshell.execDetached(["bash", "-c", Compositor.isNiri ? "pkill -x wlsunset" : "pkill hyprsunset"]);
     }
 
     function fetchState() {
@@ -98,7 +103,7 @@ Singleton {
     Process {
         id: fetchProc
         running: true
-        command: ["bash", "-c", "hyprctl hyprsunset temperature"]
+        command: ["bash", "-c", Compositor.isNiri ? "pidof wlsunset >/dev/null && echo on || true" : "hyprctl hyprsunset temperature"]
         stdout: StdioCollector {
             id: stateCollector
             onStreamFinished: {
@@ -132,6 +137,10 @@ Singleton {
         target: Config.options.light.night
         function onColorTemperatureChanged() {
             if (!root.active) return;
+            if (Compositor.isNiri) {
+                Quickshell.execDetached(["bash", "-c", `pkill -x wlsunset; ${root.niriStart}`]);
+                return;
+            }
             Hyprland.dispatch(`hyprctl hyprsunset temperature ${Config.options.light.night.colorTemperature}`);
             Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", `${Config.options.light.night.colorTemperature}`]);
         }

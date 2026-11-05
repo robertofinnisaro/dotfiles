@@ -103,6 +103,17 @@ def emit(monitor: str | None, degree: int, *, dry_run=False) -> bool:
     return all(run(cmd, quiet=False) for cmd in commands)
 
 
+portrait_bar = False
+
+
+def match_bar_to_screen(degree: int) -> None:
+    global portrait_bar
+    portrait = degree % 2 == 1
+    if NIRI and portrait != portrait_bar:
+        portrait_bar = portrait
+        run([os.path.expanduser('~/.config/niri/scripts/waybar-layout.sh'), 'portrait' if portrait else 'landscape'], quiet=False)
+
+
 def stream_events(args: list[str], label: str, inbox: queue.Queue) -> None:
     if not shutil.which(args[0]):
         inbox.put(('missing', label))
@@ -230,6 +241,7 @@ def daemon() -> None:
         needs_apply = monitor and (transform != last_transform or monitor != last_monitor
                                    or (due and actual_transform is not None and actual_transform != transform))
         if needs_apply and emit(monitor, transform):
+            match_bar_to_screen(transform)
             last_transform = transform
             last_monitor = monitor
             last_apply = now

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Palantír Realm profiles for Hyprland.
+"""Palantír Realm profiles for niri and Hyprland.
 
-Only toggles Hyprland animation/blur at runtime. No sysfs, kernel, power manager,
-service, tablet-switch, package, or config-file edits. Returns JSON on stdout.
+Only changes compositor effects, for this session. Hyprland toggles them at runtime. niri
+cannot, so it reads an override file kept in the runtime directory, outside the dotfiles.
+No sysfs, kernel, power manager, service, tablet-switch or package edits. Returns JSON on stdout.
 """
 import argparse
 import json
@@ -15,10 +16,27 @@ import fcntl
 
 PROFILES = ('shire', 'rivendell', 'mordor', 'palantir')
 KEYS = ('animations:enabled', 'decoration:blur:enabled')
-ENV_SIGNATURE = os.environ.get('HYPRLAND_INSTANCE_SIGNATURE', '')
+NIRI = bool(os.environ.get('NIRI_SOCKET'))
+ENV_SIGNATURE = os.environ.get('NIRI_SOCKET') or os.environ.get('HYPRLAND_INSTANCE_SIGNATURE', '')
 RUNTIME = Path(os.environ.get('XDG_RUNTIME_DIR', str(Path.home() / '.local' / 'state')))
 STATE = RUNTIME / 'palantir-realm-state.json'
 LOCK = RUNTIME / 'palantir-realm-state.lock'
+NIRI_OVERRIDE = RUNTIME / 'palantir-niri-realm.kdl'
+NIRI_LOW_EFFECTS = """animations {
+    off
+}
+layout {
+    shadow {
+        off
+    }
+}
+window-rule {
+    opacity 1.0
+    background-effect {
+        blur false
+    }
+}
+"""
 
 
 def call(args):
@@ -64,6 +82,19 @@ def set_option(name, val):
         raise RuntimeError(f"hyprctl keyword {name}: {result.stderr.strip() or result.stdout.strip()}")
 
 
+def apply_niri(mode):
+    if mode in ('rivendell', 'palantir'):
+        NIRI_OVERRIDE.unlink(missing_ok=True)
+    else:
+        temporary = NIRI_OVERRIDE.with_name(f'{NIRI_OVERRIDE.name}.tmp')
+        temporary.write_text(NIRI_LOW_EFFECTS, encoding='utf-8')
+        os.replace(temporary, NIRI_OVERRIDE)
+    # niri may not be watching a file that did not exist when it started.
+    result = call(['niri', 'msg', 'action', 'load-config-file'])
+    if result.returncode != 0:
+        raise RuntimeError(f"niri config reload: {result.stderr.strip() or result.stdout.strip()}")
+
+
 def write_state(data):
     RUNTIME.mkdir(parents=True, exist_ok=True)
     fd, name = tempfile.mkstemp(prefix='.palantir-realm-', dir=RUNTIME)
@@ -82,15 +113,21 @@ def status():
     state = load_state()
     return {'mode': state['mode'] if state else 'rivendell',
             'active': bool(state),
-            'session': 'running' if ENV_SIGNATURE else 'not-in-hyprland',
+            'session': 'running' if ENV_SIGNATURE else 'no-compositor',
             'power': 'unchanged', 'tablet': 'unchanged',
-            'status': 'saved for this Hyprland session' if state else 'baseline / no runtime override'}
+            'status': 'saved for this session' if state else 'baseline / no runtime override'}
 
 
 def apply(mode):
     if not ENV_SIGNATURE:
-        raise RuntimeError('HYPRLAND_INSTANCE_SIGNATURE not set; run within your Hyprland session')
+        raise RuntimeError('No compositor session found; run within niri or Hyprland')
     RUNTIME.mkdir(parents=True, exist_ok=True)
+    if NIRI:
+        with LOCK.open('a+') as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            apply_niri(mode)
+            write_state({'session': ENV_SIGNATURE, 'mode': mode, 'baseline': {}})
+        return status()
     with LOCK.open('a+') as lock:
         fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
         old = load_state()

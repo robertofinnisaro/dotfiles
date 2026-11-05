@@ -8,6 +8,12 @@ done
 if ! command -v systemctl >/dev/null 2>&1 || ! systemctl --user show-environment >/dev/null 2>&1; then
     exec qs -n
 fi
+# A realm override from an earlier niri session in this boot no longer applies.
+realm_override="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/palantir-niri-realm.kdl"
+if [[ -n "${NIRI_SOCKET:-}" && -e "$realm_override" ]]; then
+    rm -f "$realm_override"
+    niri msg action load-config-file
+fi
 # Clear the other compositor's socket, left behind if the user manager outlived the last session.
 systemctl --user unset-environment HYPRLAND_INSTANCE_SIGNATURE NIRI_SOCKET || true
 systemctl --user import-environment "${session_vars[@]}" || true

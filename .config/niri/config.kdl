@@ -220,6 +220,8 @@ spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/robertofinnisaro/Pictures/Wall
 spawn-sh-at-startup "waybar -c ~/.config/waybar/config-niri"
 spawn-at-startup "~/.config/hypr/scripts/palantir-session.sh"
 spawn-at-startup "~/.config/hypr/scripts/auto-rotate.sh"
+// Lock after 10 minutes idle and before sleep; screen off after 15.
+spawn-at-startup "swayidle" "-w" "timeout" "600" "~/.config/niri/scripts/lock.sh" "timeout" "900" "niri msg action power-off-monitors" "before-sleep" "~/.config/niri/scripts/lock.sh" "lock" "~/.config/niri/scripts/lock.sh"
 spawn-at-startup "steam" "-silent"
 spawn-at-startup "discord" "--start-minimized" "--ozone-platform-hint=wayland"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
@@ -321,3 +323,7 @@ binds {
     XF86AudioPlay allow-when-locked=true hotkey-overlay-title="Play or pause" { spawn "playerctl" "play-pause"; }
     XF86AudioPause allow-when-locked=true hotkey-overlay-title="Play or pause" { spawn "playerctl" "play-pause"; }
 }
+
+// Realm effects, written by palantir-realms.py; absent unless a low-effects realm is active.
+// Last, so it overrides the settings above. Variables are not expanded, so this uses the uid.
+include optional=true "/run/user/1000/palantir-niri-realm.kdl"

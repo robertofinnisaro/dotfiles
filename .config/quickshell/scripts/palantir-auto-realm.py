@@ -16,7 +16,7 @@ STATE_HOME = Path(os.environ.get("XDG_STATE_HOME", str(Path.home() / ".local/sta
 STATE_PATH = Path(os.environ.get("PALANTIR_AUTO_STATE", str(STATE_HOME / "palantir/auto-realm.json")))
 POWER_ROOT = Path(os.environ.get("PALANTIR_POWER_ROOT", "/sys/class/power_supply"))
 REALMS = Path(__file__).with_name("palantir-realms.py")
-SESSION = os.environ.get("HYPRLAND_INSTANCE_SIGNATURE", "")
+SESSION = os.environ.get("NIRI_SOCKET") or os.environ.get("HYPRLAND_INSTANCE_SIGNATURE", "")
 
 
 def read_state():
@@ -83,12 +83,12 @@ def command(verb):
         save_state(state)
     elif verb == "enable":
         if not SESSION:
-            raise RuntimeError("Enable auto Realms from inside Hyprland")
+            raise RuntimeError("Enable auto Realms from inside your desktop session")
         state = {"enabled": True, "session": SESSION, "last_mode": None}
         save_state(state)
     if verb == "tick" and state.get("enabled"):
         if not SESSION:
-            return {"enabled": True, "power": power, "message": "Hyprland session unavailable; nothing changed"}
+            return {"enabled": True, "power": power, "message": "Desktop session unavailable; nothing changed"}
         if state.get("session") != SESSION:
             state["session"] = SESSION
             state["last_mode"] = None

@@ -1,0 +1,35 @@
+{
+  "include": "~/.config/waybar/config-niri",
+
+  "modules-left": [
+    "custom/tailscale",
+    "tray",
+    "niri/workspaces"
+  ],
+
+  "modules-center": [
+    "clock",
+    "custom/logo"
+  ],
+
+  "modules-right": [
+    "pulseaudio",
+    "backlight",
+    "custom/battery",
+    "custom/osk",
+    "custom/power"
+  ],
+
+  "niri/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "rivendell": "1",
+      "bree": "2",
+      "mordor": "3",
+      "gondor": "4",
+      "shire": "5",
+      "magic": "S",
+      "default": "·"
+    }
+  }
+}
