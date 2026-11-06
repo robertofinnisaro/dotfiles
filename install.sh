@@ -15,8 +15,12 @@ link() {
 echo "Installing dotfiles..."
 
 mkdir -p "$HOME/.config"
-for config in niri hypr framework waybar alacritty quickshell fuzzel wlogout systemd; do
+for config in niri hypr framework waybar alacritty quickshell fuzzel wlogout systemd xdg-desktop-portal; do
     link "$config"
 done
+
+xdg-mime default pcmanfm-qt.desktop inode/directory
+# Apps started outside a terminal only go dark if they get this preference.
+gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
 echo "Done."

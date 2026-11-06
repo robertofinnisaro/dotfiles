@@ -103,7 +103,7 @@ cd ~/dotfiles
 Install the packages:
 
 ```bash
-sudo pacman -S niri xwayland-satellite quickshell waybar swaybg swayidle hyprlock wlsunset fuzzel alacritty grim slurp wl-clipboard cliphist brightnessctl playerctl jq iio-sensor-proxy libinput-tools ydotool xdg-desktop-portal-gnome xdg-desktop-portal-gtk gnome-keyring network-manager-applet blueman pcmanfm-qt qt6ct
+sudo pacman -S niri xwayland-satellite quickshell waybar swaybg swayidle hyprlock wlsunset fuzzel alacritty grim slurp wl-clipboard cliphist brightnessctl playerctl jq iio-sensor-proxy libinput-tools ydotool xdg-desktop-portal-gnome xdg-desktop-portal-gtk xdg-desktop-portal-lxqt gnome-keyring network-manager-applet blueman pcmanfm-qt qt6ct
 ```
 
 You'll also need:

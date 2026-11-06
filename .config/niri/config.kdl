@@ -208,6 +208,9 @@ environment {
     QT_SCALE_FACTOR "1"
     GDK_SCALE "1"
     GDK_DPI_SCALE "1"
+    // Send GTK3 and GTK4 file dialogs through the portal, so they use the pcmanfm-qt picker too.
+    GTK_USE_PORTAL "1"
+    GDK_DEBUG "portals"
     SSH_AUTH_SOCK "/run/user/1000/ssh-agent.socket"
 }
 
